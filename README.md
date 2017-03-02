@@ -6,4 +6,4 @@ The motivations for maintaining this are:
 * Never forget those *tricks* in *that* language
 * Solve basic puzzles/problems and improve them over time when I find a better solution
 
-All files will be *.org* and will follow [literate programming](https://en.wikipedia.org/wiki/Literate_programming) paradigm.
+All files will be [*.org*](http://orgmode.org) and will follow [literate programming](https://en.wikipedia.org/wiki/Literate_programming) paradigm.
