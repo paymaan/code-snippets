@@ -5,10 +5,12 @@ via list comprehensions in haskell which are type homogenous.
 
 #+BEGIN_SRC haskell :exports both
   let fizzBuzz :: [Int] -> [Int]
-  let fizzBuzz inputList = [if x `mod` 3 == 0 then -3 else if x `mod` 5 == 0 then -5 else x | x <- inputList]
+  let fizzBuzz inputList = [if x `mod` 3 == 0 then -3 
+                            else if x `mod` 5 == 0 then -5 
+                            else x | x <- inputList]
   fizzBuzz [1..10] -- try it out
 #+END_SRC
 
 #+RESULTS:
-: Prelude> [1,2,-3,4,-5,-3,7,8,-3,-5]
+| 1 | 2 | -3 | 4 | -5 | -3 | 7 | 8 | -3 | -5 |
 
