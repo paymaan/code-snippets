@@ -38,4 +38,57 @@ via list comprehensions in haskell which are type homogenous.
 #+RESULTS:
 : Ths s nt n mbrll.
 
+** Length of a string
+
+#+BEGIN_SRC haskell :exports both
+  let length' list = sum [1 | _ <- list]
+#+END_SRC
+
+#+BEGIN_SRC haskell :exports both
+  length' [99,76,5,6,8]
+#+END_SRC
+
+#+RESULTS:
+: 5
+
+#+BEGIN_SRC haskell :exports both
+  length' "starwars"
+#+END_SRC
+
+#+RESULTS:
+: 8
+
+#+BEGIN_SRC haskell :exports both
+  length' ["starwars","vader","galactica"]
+#+END_SRC
+
+#+RESULTS:
+: 3
+
+
+** Smaller number longer word
+
+Given a list of integers e.g. =[1,2..8]==, list all combinations of pairs of these numbers in which the
+smaller number has a larger word. 
+
+One example is =(3,6)= because =3 < 6= and =length("three") > length("six)=. Note tha the length function returns
+the number of characters in a string e.g. length("three") = 5 and length("six) = 3.
+
+#+BEGIN_SRC haskell :exports both
+  let zipAllCombinations list1 list2 = [(x,y) | x <- list1, y <- list2]
+  let generateCombinations :: [int] -> [((int,int), ([c],[c]))]
+  let generateCombinations numbers words = zip (zipAllCombinations numbers numbers) (zipAllCombinations words words)
+  let snlw :: [((int,int), ([c],[c]))] -> [((int,int), ([c],[c]))]
+  let snlw combinations = [fst pair | pair <- combinations , 
+                           fst (fst pair) < snd (fst pair), length (fst (snd pair)) > length (snd (snd pair))]
+  snlw (generateCombinations [1..8] ["one","two","three","four","five","six","seven","eight"])  
+#+END_SRC
+
+#+RESULTS:
+| 3 | 4 |
+| 3 | 5 |
+| 3 | 6 |
+| 4 | 6 |
+| 5 | 6 |
+
 
