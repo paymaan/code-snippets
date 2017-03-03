@@ -77,15 +77,15 @@ One example is =(3,6)= because =3 < 6= and =length("three") > length("six)=. Not
 the number of characters in a string e.g. length("three") = 5 and length("six) = 3.
 
 #+BEGIN_SRC haskell :exports both
-  let zipAllCombinations list1 list2 = [(x,y) | x <- list1, y <- list2]
-  let generateCombinations :: [int] -> [((int,int), ([c],[c]))]
-  let generateCombinations numbers names = 
-              zip (zipAllCombinations numbers numbers) (zipAllCombinations names names)
-  let snlw :: [((int,int), ([c],[c]))] -> [((int,int), ([c],[c]))]
-  let snlw combinations = 
-              [fst pair | pair <- combinations , 
-               fst (fst pair) < snd (fst pair), length (fst (snd pair)) > length (snd (snd pair))]
-  snlw (generateCombinations [1..8] ["one","two","three","four","five","six","seven","eight"])  
+    let zipAllCombinations list1 list2 = [(x,y) | x <- list1, y <- list2]
+    let generateCombinations :: [int] -> [((int,int), ([c],[c]))]
+    let generateCombinations numbers names = 
+          zip (zipAllCombinations numbers numbers) (zipAllCombinations names names)
+    let snlw :: [((int,int), ([c],[c]))] -> [((int,int), ([c],[c]))]
+    let snlw combinations = 
+          [fst pair | pair <- combinations , 
+           fst (fst pair) < snd (fst pair), length (fst (snd pair)) > length (snd (snd pair))]
+    snlw (generateCombinations [1..8] ["one","two","three","four","five","six","seven","eight"])  
 #+END_SRC
 
 #+RESULTS:
@@ -95,4 +95,24 @@ the number of characters in a string e.g. length("three") = 5 and length("six) =
 | 4 | 6 |
 | 5 | 6 |
 
+
+** Find the triangle
+
+Let there be a right angled triangle =T=, with sides of length =c=, =b=, and =a= where =c= is the
+hypotenuse. Also all lengths are integers. Find all triples (c,b,a) for triangles where the
+perimeter of the triangle is equal to =24=. Assume that =c,b,a < 10=.
+
+Alright, so we know that this will always holds true for T:
+=c^2 = a^2 + b^2=
+
+Also, perimeter of T is =c+b+a=. 
+
+#+BEGIN_SRC haskell :exports both
+  let findTriangles :: int -> int -> (int,int,int)
+  let findTriangles numberLimit perimeterLimit = [(c,b,a) | c <- [1..numberLimit], b <- [1..numberLimit], a <- [1..numberLimit], c^2 == a^2 + b^2, c + b + a == perimeterLimit]
+  findTriangles 10 24
+#+END_SRC
+
+#+RESULTS:
+: Prelude> [(10,6,8),(10,8,6)]
 
