@@ -114,5 +114,6 @@ Also, perimeter of T is =c+b+a=.
 #+END_SRC
 
 #+RESULTS:
-: Prelude> [(10,6,8),(10,8,6)]
+| 10 | 6 | 8 |
+| 10 | 8 | 6 |
 
