@@ -77,10 +77,12 @@ the number of characters in a string e.g. length("three") = 5 and length("six) =
 #+BEGIN_SRC haskell :exports both
   let zipAllCombinations list1 list2 = [(x,y) | x <- list1, y <- list2]
   let generateCombinations :: [int] -> [((int,int), ([c],[c]))]
-  let generateCombinations numbers words = zip (zipAllCombinations numbers numbers) (zipAllCombinations words words)
+  let generateCombinations numbers words = 
+              zip (zipAllCombinations numbers numbers) (zipAllCombinations words words)
   let snlw :: [((int,int), ([c],[c]))] -> [((int,int), ([c],[c]))]
-  let snlw combinations = [fst pair | pair <- combinations , 
-                           fst (fst pair) < snd (fst pair), length (fst (snd pair)) > length (snd (snd pair))]
+  let snlw combinations = 
+              [fst pair | pair <- combinations , 
+               fst (fst pair) < snd (fst pair), length (fst (snd pair)) > length (snd (snd pair))]
   snlw (generateCombinations [1..8] ["one","two","three","four","five","six","seven","eight"])  
 #+END_SRC
 
