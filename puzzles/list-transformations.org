@@ -17,7 +17,7 @@ via list comprehensions in haskell which are type homogenous.
 
 ** Lowercase a sentence
 
-#+BEGIN_SRC haskell :exports bot
+#+BEGIN_SRC haskell :exports both
   import Data.Char
   let lowerSentence :: [c] -> [c]
   let lowerSentence sentence = [ toLower char  | char <- sentence ]
@@ -26,4 +26,8 @@ via list comprehensions in haskell which are type homogenous.
 
 #+RESULTS:
 : haskell is a really cool lanugage!
+
+
+
+
 
