@@ -20,14 +20,22 @@ via list comprehensions in haskell which are type homogenous.
 #+BEGIN_SRC haskell :exports both
   import Data.Char
   let lowerSentence :: [c] -> [c]
-  let lowerSentence sentence = [ toLower char  | char <- sentence ]
+  let lowerSentence sentence = [ toLower letter | letter <- sentence ]
   lowerSentence "Haskell is A RealLY cOol Lanugage!"
 #+END_SRC
 
 #+RESULTS:
 : haskell is a really cool lanugage!
 
+** Remove all vowels (a/A, e/E, i/I, o/O, u/U)
 
+#+BEGIN_SRC haskell :exports both
+  let removeVowels :: [c] -> [c]
+  let removeVowels sentence = [ letter | letter <- sentence , not ((toLower letter) `elem` "aeiou") ]
+  removeVowels "This is not an Umbrella."
+#+END_SRC
 
+#+RESULTS:
+: Ths s nt n mbrll.
 
 
