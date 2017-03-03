@@ -99,7 +99,7 @@ the number of characters in a string e.g. length("three") = 5 and length("six) =
 ** Find the triangle
 
 Let there be a right angled triangle =T=, with sides of length =c=, =b=, and =a= where =c= is the
-hypotenuse. Also all lengths are integers. Find all triples (c,b,a) for triangles where the
+hypotenuse. Also all lengths are integers. Find all triples =(c,b,a)= for triangles where the
 perimeter of the triangle is equal to =24=. Assume that =c,b,a < 10=.
 
 Alright, so we know that this will always holds true for T:
