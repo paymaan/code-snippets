@@ -27,6 +27,7 @@ via list comprehensions in haskell which are type homogenous.
 #+RESULTS:
 : haskell is a really cool lanugage!
 
+
 ** Remove all vowels (a/A, e/E, i/I, o/O, u/U)
 
 #+BEGIN_SRC haskell :exports both
@@ -37,6 +38,7 @@ via list comprehensions in haskell which are type homogenous.
 
 #+RESULTS:
 : Ths s nt n mbrll.
+
 
 ** Length of a string
 
@@ -68,7 +70,7 @@ via list comprehensions in haskell which are type homogenous.
 
 ** Smaller number longer word
 
-Given a list of integers e.g. =[1,2..8]==, list all combinations of pairs of these numbers in which the
+Given a list of integers e.g. =[1,2..8]=, list all combinations of pairs of these numbers in which the
 smaller number has a larger word. 
 
 One example is =(3,6)= because =3 < 6= and =length("three") > length("six)=. Note tha the length function returns
