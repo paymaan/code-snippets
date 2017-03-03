@@ -14,3 +14,16 @@ via list comprehensions in haskell which are type homogenous.
 #+RESULTS:
 | 1 | 2 | -3 | 4 | -5 | -3 | 7 | 8 | -3 | -5 |
 
+
+** Lowercase a sentence
+
+#+BEGIN_SRC haskell :exports bot
+  import Data.Char
+  let lowerSentence :: [c] -> [c]
+  let lowerSentence sentence = [ toLower char  | char <- sentence ]
+  lowerSentence "Haskell is A RealLY cOol Lanugage!"
+#+END_SRC
+
+#+RESULTS:
+: haskell is a really cool lanugage!
+
