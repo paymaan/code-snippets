@@ -1,8 +1,72 @@
 In all example, we want to sort this list of numbers in ascending order:
 
+#+BEGIN_SRC 
 [3,2,87,45,43,77,12,99,34,75,23,74,105,950,450,346,210,323]
+#+END_SRC
 
 ** Bubble sort
+#+BEGIN_SRC C++ :exports both
+#include <array>
+#include <iostream>
+
+namespace my {
+
+/// @brief Swaps inputArray[firstIndex] with inputArray[secondIndex]
+template <size_t SIZE>
+void swap(std::array<int, SIZE>& inputArray, size_t firstIndex,
+          size_t secondIndex) {
+    int firstIndexOriginalValue = inputArray[firstIndex];
+    inputArray[firstIndex] = inputArray[secondIndex];
+    inputArray[secondIndex] = firstIndexOriginalValue;
+}
+
+/// @brief Performs bubble sort on inputArray and stores result in outputArray
+template <size_t SIZE>
+void bubbleSort(std::array<int, SIZE>& inputArray,
+                std::array<int, SIZE>& outputArray) {
+    for (int i = 0; i < SIZE - 1; ++i) {
+        for (int j = 0; j < SIZE - 1 - i; ++j) {
+            if (inputArray[j] > inputArray[j + 1]) {
+                swap(inputArray, j, j + 1);
+            }
+        }
+    }
+
+    outputArray = inputArray;
+}
+
+/// @brief Prints a given std::array
+template <size_t SIZE>
+void printArrayToStdOut(const std::array<int, SIZE>& inputArray) {
+    std::cout << "[ ";
+    for (const auto& element : inputArray) {
+        std::cout << element << " ";
+    }
+    std::cout << "] " << std::endl;
+}
+}
+
+int main() {
+    using namespace my;
+    std::array<int, 18> inputArray = {3,  2,  87, 45,  43,  77,  12,  99,  34,
+                                      75, 23, 74, 105, 950, 450, 346, 210, 323};
+    std::array<int, 18> outputArray;
+    outputArray.fill(-1);
+
+    printArrayToStdOut(inputArray);
+
+    bubbleSort(inputArray, outputArray);
+
+    printArrayToStdOut(outputArray);
+
+    return 0;
+}
+#+END_SRC
+
+#+RESULTS:
+| [ | 3 | 2 | 87 | 45 | 43 | 77 | 12 | 99 | 34 | 75 | 23 | 74 | 105 | 950 | 450 | 346 | 210 | 323 | ] |
+| [ | 2 | 3 | 12 | 23 | 34 | 43 | 45 | 74 | 75 | 77 | 87 | 99 | 105 | 210 | 323 | 346 | 450 | 950 | ] |
+
 ** Insertion sort
 ** Merge sort
 ** Heap sort
