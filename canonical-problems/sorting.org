@@ -1,0 +1,11 @@
+In all example, we want to sort this list of numbers in ascending order:
+
+[3,2,87,45,43,77,12,99,34,75,23,74,105,950,450,346,210,323]
+
+** Bubble sort
+** Insertion sort
+** Merge sort
+** Heap sort
+** BST sort
+** Counting sort
+** Radix sort
