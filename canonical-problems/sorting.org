@@ -24,6 +24,7 @@ void bubbleSort(std::array<int, SIZE>& inputArray,
 /// @brief Prints a given std::array
 template <size_t SIZE>
 void printArrayToStdOut(const std::array<int, SIZE>& inputArray);
+
 }
 
 int main() {
