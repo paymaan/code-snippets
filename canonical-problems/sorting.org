@@ -14,40 +14,21 @@ namespace my {
 /// @brief Swaps inputArray[firstIndex] with inputArray[secondIndex]
 template <size_t SIZE>
 void swap(std::array<int, SIZE>& inputArray, size_t firstIndex,
-          size_t secondIndex) {
-    int firstIndexOriginalValue = inputArray[firstIndex];
-    inputArray[firstIndex] = inputArray[secondIndex];
-    inputArray[secondIndex] = firstIndexOriginalValue;
-}
+          size_t secondIndex);
 
 /// @brief Performs bubble sort on inputArray and stores result in outputArray
 template <size_t SIZE>
 void bubbleSort(std::array<int, SIZE>& inputArray,
-                std::array<int, SIZE>& outputArray) {
-    for (int i = 0; i < SIZE - 1; ++i) {
-        for (int j = 0; j < SIZE - 1 - i; ++j) {
-            if (inputArray[j] > inputArray[j + 1]) {
-                swap(inputArray, j, j + 1);
-            }
-        }
-    }
-
-    outputArray = inputArray;
-}
+                std::array<int, SIZE>& outputArray);
 
 /// @brief Prints a given std::array
 template <size_t SIZE>
-void printArrayToStdOut(const std::array<int, SIZE>& inputArray) {
-    std::cout << "[ ";
-    for (const auto& element : inputArray) {
-        std::cout << element << " ";
-    }
-    std::cout << "] " << std::endl;
-}
+void printArrayToStdOut(const std::array<int, SIZE>& inputArray);
 }
 
 int main() {
     using namespace my;
+
     std::array<int, 18> inputArray = {3,  2,  87, 45,  43,  77,  12,  99,  34,
                                       75, 23, 74, 105, 950, 450, 346, 210, 323};
     std::array<int, 18> outputArray;
@@ -60,6 +41,37 @@ int main() {
     printArrayToStdOut(outputArray);
 
     return 0;
+}
+
+template <size_t SIZE>
+void my::bubbleSort(std::array<int, SIZE>& inputArray,
+                    std::array<int, SIZE>& outputArray) {
+    for (int i = 0; i < SIZE - 1; ++i) {
+        for (int j = 0; j < SIZE - 1 - i; ++j) {
+            if (inputArray[j] > inputArray[j + 1]) {
+                swap(inputArray, j, j + 1);
+            }
+        }
+    }
+
+    outputArray = inputArray;
+}
+
+template <size_t SIZE>
+void my::swap(std::array<int, SIZE>& inputArray, size_t firstIndex,
+              size_t secondIndex) {
+    int firstIndexOriginalValue = inputArray[firstIndex];
+    inputArray[firstIndex] = inputArray[secondIndex];
+    inputArray[secondIndex] = firstIndexOriginalValue;
+}
+
+template <size_t SIZE>
+void my::printArrayToStdOut(const std::array<int, SIZE>& inputArray) {
+    std::cout << "[ ";
+    for (const auto& element : inputArray) {
+        std::cout << element << " ";
+    }
+    std::cout << "] " << std::endl;
 }
 #+END_SRC
 
