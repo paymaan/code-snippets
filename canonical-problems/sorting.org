@@ -165,8 +165,130 @@ void my::printArrayToStdOut(const std::array<int, SIZE>& array) {
 
 *** Analysis
 This is again $O(n^2)$ in time. Average is the same. In the best case though, this will be $O(n)$. Memory is $O(1)$.
-Note that we can make $O(nlogn)$ comparisons instead of $O(n^2)$ by using binary search at every iteration.
+Note that we can make $O(nlogn)$ comparisons instead of $O(n^2)$ by using binary search at every iteration. Swaps are
+still $O(n^2)$ though, sadly.
 ** Merge sort
+Typical divide and conquer algorithm which can be solved recursively. The beauty of recursion is that the code
+is self documenting:
+
+#+BEGIN_SRC C++ :exports both
+#include <algorithm>
+#include <array>
+#include <iostream>
+
+namespace my {
+
+/// @brief Performs merge sort on array
+template <size_t SIZE>
+std::array<int, SIZE> mergeSort(std::array<int, SIZE>& array);
+
+/// @brief Merge two sorted arrays
+template <size_t SIZE>
+std::array<int, 2 * SIZE>
+mergeSortedArrays(std::array<int, SIZE>& firstSortedArray,
+                  std::array<int, SIZE>& secondSortedArray);
+
+/// @brief Prints a given array
+template <size_t SIZE>
+void printArrayToStdOut(const std::array<int, SIZE>& array);
+}
+
+int main() {
+    using namespace my;
+
+    std::array<int, 16> array = {3,  2,  87, 45, 43,  77,  12,  99,
+                                 34, 75, 23, 74, 105, 950, 450, 346};
+
+    printArrayToStdOut(array);
+
+    printArrayToStdOut(mergeSort(array));
+
+    return 0;
+}
+
+template <size_t SIZE>
+std::array<int, SIZE> my::mergeSort(std::array<int, SIZE>& array) {
+  if (array.size() <= 1)
+        return array;
+
+    const bool isArraySizeEven = (SIZE % 2 == 0);
+    if (!isArraySizeEven) {
+        std::cout << "Only even sized arrays supported for now" << std::endl;
+        return array;
+    }
+
+    std::array<int, SIZE / 2> leftArray;
+    leftArray.fill(-1);
+    std::array<int, SIZE / 2> rightArray;
+    rightArray.fill(-1);
+
+    // std::copy(array.begin(), array.begin() + SIZE / 2, leftArray);
+    // std::copy(array.begin() + SIZE / 2 + 1, array.end() + SIZE / 2,
+    // rightArray);
+
+    leftArray = mergeSort(leftArray);
+    rightArray = mergeSort(rightArray);
+
+    return mergeSortedArrays(leftArray, rightArray);
+}
+
+template <size_t SIZE>
+std::array<int, 2 * SIZE>
+my::mergeSortedArrays(std::array<int, SIZE>& firstSortedArray,
+                      std::array<int, SIZE>& secondSortedArray) {
+    // no need to do anything if arrays are empty
+    if (firstSortedArray.empty() && secondSortedArray.empty())
+        return firstSortedArray;
+    if (firstSortedArray.empty())
+        return secondSortedArray;
+    if (secondSortedArray.empty())
+        return firstSortedArray;
+
+    // ensure firstSortedArray is the same size as secondSortedArray
+    if (firstSortedArray.size() != secondSortedArray.size()) {
+        // Until I setup asserts...
+        std::cout << "Arrays must be the same size" << std::endl;
+        return firstSortedArray;
+    }
+
+    size_t firstSortedArrayPtrIndex = 0;
+    size_t secondSortedArrayPtrIndex = 0;
+    size_t mergedArrayPtrIndex = 0;
+
+    std::array<int, SIZE * 2> mergedArray;
+    while (mergedArrayPtrIndex <= mergedArray.size()) {
+        const bool allFirstSortedArrayValuesUsed =
+            firstSortedArrayPtrIndex > firstSortedArray.size();
+        const bool useFirstSortedArrayValue =
+            !allFirstSortedArrayValuesUsed &&
+            ((secondSortedArrayPtrIndex > secondSortedArray.size()) ||
+             (firstSortedArray[firstSortedArrayPtrIndex] <
+              secondSortedArray[secondSortedArrayPtrIndex]));
+        if (useFirstSortedArrayValue) {
+            mergedArray[mergedArrayPtrIndex] =
+                firstSortedArray[firstSortedArrayPtrIndex];
+            ++firstSortedArrayPtrIndex;
+        } else {
+            mergedArray[mergedArrayPtrIndex] =
+                secondSortedArray[secondSortedArrayPtrIndex];
+            ++secondSortedArrayPtrIndex;
+        }
+        ++mergedArrayPtrIndex;
+    }
+
+    return mergedArray;
+}
+
+template <size_t SIZE>
+void my::printArrayToStdOut(const std::array<int, SIZE>& array) {
+    std::cout << "[ ";
+    for (const auto& element : array) {
+        std::cout << element << " ";
+    }
+    std::cout << "] " << std::endl;
+}
+
+#+END_SRC
 ** Heap sort
 ** BST sort
 ** Counting sort
