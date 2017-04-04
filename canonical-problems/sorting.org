@@ -5,71 +5,154 @@ In all example, we want to sort this list of numbers in ascending order:
 #+END_SRC
 
 ** Bubble sort
+If we think visually, this is just ~bubbling~ up elements (starting from index 0) to the right. After =i= iterations, the
+last =i= elements in the array are ordered. Note that in bubble sort, the maximums are bubbled to the unsorted section (right).
+
 #+BEGIN_SRC C++ :exports both
 #include <array>
 #include <iostream>
 
 namespace my {
 
-/// @brief Swaps inputArray[firstIndex] with inputArray[secondIndex]
+/// @brief Swaps array[firstIndex] with array[secondIndex]
 template <size_t SIZE>
-void swap(std::array<int, SIZE>& inputArray, size_t firstIndex,
-          size_t secondIndex);
+void swap(std::array<int, SIZE>& array, size_t firstIndex, size_t secondIndex);
 
-/// @brief Performs bubble sort on inputArray and stores result in outputArray
+/// @brief Performs bubble sort on array
+template <size_t SIZE> void bubbleSort(std::array<int, SIZE>& array);
+
+/// @brief Prints a given array
 template <size_t SIZE>
-void bubbleSort(std::array<int, SIZE>& inputArray,
-                std::array<int, SIZE>& outputArray);
-
-/// @brief Prints a given std::array
-template <size_t SIZE>
-void printArrayToStdOut(const std::array<int, SIZE>& inputArray);
-
+void printArrayToStdOut(const std::array<int, SIZE>& array);
 }
 
 int main() {
     using namespace my;
 
-    std::array<int, 18> inputArray = {3,  2,  87, 45,  43,  77,  12,  99,  34,
-                                      75, 23, 74, 105, 950, 450, 346, 210, 323};
-    std::array<int, 18> outputArray;
-    outputArray.fill(-1);
+    std::array<int, 18> array = {3,  2,  87, 45,  43,  77,  12,  99,  34,
+                                 75, 23, 74, 105, 950, 450, 346, 210, 323};
 
-    printArrayToStdOut(inputArray);
+    printArrayToStdOut(array);
 
-    bubbleSort(inputArray, outputArray);
+    bubbleSort(array);
 
-    printArrayToStdOut(outputArray);
+    printArrayToStdOut(array);
 
     return 0;
 }
 
-template <size_t SIZE>
-void my::bubbleSort(std::array<int, SIZE>& inputArray,
-                    std::array<int, SIZE>& outputArray) {
+template <size_t SIZE> void my::bubbleSort(std::array<int, SIZE>& array) {
     for (int i = 0; i < SIZE - 1; ++i) {
         for (int j = 0; j < SIZE - 1 - i; ++j) {
-            if (inputArray[j] > inputArray[j + 1]) {
-                swap(inputArray, j, j + 1);
+            if (array[j] > array[j + 1]) {
+                swap(array, j, j + 1);
             }
         }
     }
-
-    outputArray = inputArray;
 }
 
 template <size_t SIZE>
-void my::swap(std::array<int, SIZE>& inputArray, size_t firstIndex,
+void my::swap(std::array<int, SIZE>& array, size_t firstIndex,
               size_t secondIndex) {
-    int firstIndexOriginalValue = inputArray[firstIndex];
-    inputArray[firstIndex] = inputArray[secondIndex];
-    inputArray[secondIndex] = firstIndexOriginalValue;
+    const int firstIndexOriginalValue = array[firstIndex];
+    array[firstIndex] = array[secondIndex];
+    array[secondIndex] = firstIndexOriginalValue;
 }
 
 template <size_t SIZE>
-void my::printArrayToStdOut(const std::array<int, SIZE>& inputArray) {
+void my::printArrayToStdOut(const std::array<int, SIZE>& array) {
     std::cout << "[ ";
-    for (const auto& element : inputArray) {
+    for (const auto& element : array) {
+        std::cout << element << " ";
+    }
+    std::cout << "] " << std::endl;
+}
+
+#+END_SRC
+
+#+RESULTS:
+| [ | 3 | 2 | 87 | 45 | 43 | 77 | 12 | 99 | 34 | 75 | 23 | 74 | 105 | 950 | 450 | 346 | 210 | 323 | ] |
+| [ | 2 | 3 | 12 | 23 | 34 | 43 | 45 | 74 | 75 | 77 | 87 | 99 | 105 | 210 | 323 | 346 | 450 | 950 | ] |
+
+*** Analysis
+In the worst case, time complexity is $O(n^2)$ where =n= is the number of elements in the array or size of the array. Average is the same. Best is actually $O(n)$ but for that we have to modify the
+above algorithm to cache whether we made a swap during an iteration. If the list is already sorted, a linear scan would result in
+no swaps at which point we'll end the algorithm. 
+In terms of memory, this algorithm is $O(1)$.
+
+** Insertion sort
+Similar to bubble sort.
+If we think visually, this is just ~bubbling~ up elements (starting from index 1) to the left. After =i= iterations, the
+first =i= elements in the array are ordered. Note that in insertion sort, the minimums are bubbled to the sort section in the left.
+Note that both bubble sort and insertion sort are =inplace= algorithms i.e. they modify the array while it's being sorted. At
+the end, the input array /is/ is the sorted array.
+#+BEGIN_SRC C++ :exports both
+#include <array>
+#include <iostream>
+
+namespace my {
+
+/// @brief Swaps array[firstIndex] with array[secondIndex]
+template <size_t SIZE>
+void swap(std::array<int, SIZE>& array, size_t firstIndex, size_t secondIndex);
+
+/// @brief Performs insertion sort on array
+template <size_t SIZE> void insertionSort(std::array<int, SIZE>& array);
+
+/// @brief Prints a given array
+template <size_t SIZE>
+void printArrayToStdOut(const std::array<int, SIZE>& array);
+}
+
+int main() {
+    using namespace my;
+
+    std::array<int, 18> array = {3,  2,  87, 45,  43,  77,  12,  99,  34,
+                                 75, 23, 74, 105, 950, 450, 346, 210, 323};
+
+    printArrayToStdOut(array);
+
+    insertionSort(array);
+
+    printArrayToStdOut(array);
+
+    return 0;
+}
+
+template <size_t SIZE> void my::insertionSort(std::array<int, SIZE>& array) {
+    for (int i = 1; i <= SIZE - 1; ++i) {
+        const int key = array[i];
+        for (int j = i - 1; j >= 0; --j) {
+            // if at any point when going left, we find an element that is
+            // smaller than the
+            // key, we can safely break. This is because we know that the left
+            // section is sorted
+            // and if an element is already smaller than the key, than we don't
+            // need to go any more left.
+            if (array[j] <= key) {
+                break;
+            }
+            if (array[j] > array[j + 1]) {
+                swap(array, j, j + 1);
+            }
+        }
+    }
+}
+
+template <size_t SIZE>
+void my::swap(std::array<int, SIZE>& array, size_t firstIndex,
+              size_t secondIndex) {
+    // another way of swapping without using temp
+    // don't like this too much because of potential integer overflows :)
+    array[firstIndex] = array[firstIndex] + array[secondIndex];
+    array[secondIndex] = array[firstIndex] - array[secondIndex];
+    array[firstIndex] = array[firstIndex] - array[secondIndex];
+}
+
+template <size_t SIZE>
+void my::printArrayToStdOut(const std::array<int, SIZE>& array) {
+    std::cout << "[ ";
+    for (const auto& element : array) {
         std::cout << element << " ";
     }
     std::cout << "] " << std::endl;
@@ -80,7 +163,9 @@ void my::printArrayToStdOut(const std::array<int, SIZE>& inputArray) {
 | [ | 3 | 2 | 87 | 45 | 43 | 77 | 12 | 99 | 34 | 75 | 23 | 74 | 105 | 950 | 450 | 346 | 210 | 323 | ] |
 | [ | 2 | 3 | 12 | 23 | 34 | 43 | 45 | 74 | 75 | 77 | 87 | 99 | 105 | 210 | 323 | 346 | 450 | 950 | ] |
 
-** Insertion sort
+*** Analysis
+This is again $O(n^2)$ in time. Average is the same. In the best case though, this will be $O(n)$. Memory is $O(1)$.
+Note that we can make $O(nlogn)$ comparisons instead of $O(n^2)$ by using binary search at every iteration.
 ** Merge sort
 ** Heap sort
 ** BST sort
