@@ -173,31 +173,27 @@ is self documenting:
 
 #+BEGIN_SRC C++ :exports both
 #include <algorithm>
-#include <array>
 #include <iostream>
+#include <vector>
 
 namespace my {
 
 /// @brief Performs merge sort on array
-template <size_t SIZE>
-std::array<int, SIZE> mergeSort(std::array<int, SIZE>& array);
+std::vector<int> mergeSort(std::vector<int>& array);
 
 /// @brief Merge two sorted arrays
-template <size_t SIZE>
-std::array<int, 2 * SIZE>
-mergeSortedArrays(std::array<int, SIZE>& firstSortedArray,
-                  std::array<int, SIZE>& secondSortedArray);
+std::vector<int> mergeSortedArrays(std::vector<int>& firstSortedArray,
+                                   std::vector<int>& secondSortedArray);
 
 /// @brief Prints a given array
-template <size_t SIZE>
-void printArrayToStdOut(const std::array<int, SIZE>& array);
+void printArrayToStdOut(const std::vector<int>& array);
 }
 
 int main() {
     using namespace my;
 
-    std::array<int, 16> array = {3,  2,  87, 45, 43,  77,  12,  99,
-                                 34, 75, 23, 74, 105, 950, 450, 346};
+    std::vector<int> array = {3,  2,  87, 45, 43,  77,  12,  99,
+                              34, 75, 23, 74, 105, 950, 450, 346};
 
     printArrayToStdOut(array);
 
@@ -206,9 +202,9 @@ int main() {
     return 0;
 }
 
-template <size_t SIZE>
-std::array<int, SIZE> my::mergeSort(std::array<int, SIZE>& array) {
-  if (array.size() <= 1)
+std::vector<int> my::mergeSort(std::vector<int>& array) {
+    size_t SIZE = array.size();
+    if (SIZE <= 1)
         return array;
 
     const bool isArraySizeEven = (SIZE % 2 == 0);
@@ -217,14 +213,16 @@ std::array<int, SIZE> my::mergeSort(std::array<int, SIZE>& array) {
         return array;
     }
 
-    std::array<int, SIZE / 2> leftArray;
-    leftArray.fill(-1);
-    std::array<int, SIZE / 2> rightArray;
-    rightArray.fill(-1);
+    std::vector<int> leftArray;
+    std::vector<int> rightArray;
 
-    // std::copy(array.begin(), array.begin() + SIZE / 2, leftArray);
-    // std::copy(array.begin() + SIZE / 2 + 1, array.end() + SIZE / 2,
-    // rightArray);
+    for (size_t vectorIdx = 0; vectorIdx < array.size(); ++vectorIdx) {
+        if (vectorIdx <= array.size() / 2 - 1) {
+            leftArray.push_back(array[vectorIdx]);
+        } else {
+            rightArray.push_back(array[vectorIdx]);
+        }
+    }
 
     leftArray = mergeSort(leftArray);
     rightArray = mergeSort(rightArray);
@@ -232,10 +230,8 @@ std::array<int, SIZE> my::mergeSort(std::array<int, SIZE>& array) {
     return mergeSortedArrays(leftArray, rightArray);
 }
 
-template <size_t SIZE>
-std::array<int, 2 * SIZE>
-my::mergeSortedArrays(std::array<int, SIZE>& firstSortedArray,
-                      std::array<int, SIZE>& secondSortedArray) {
+std::vector<int> my::mergeSortedArrays(std::vector<int>& firstSortedArray,
+                                       std::vector<int>& secondSortedArray) {
     // no need to do anything if arrays are empty
     if (firstSortedArray.empty() && secondSortedArray.empty())
         return firstSortedArray;
@@ -255,40 +251,42 @@ my::mergeSortedArrays(std::array<int, SIZE>& firstSortedArray,
     size_t secondSortedArrayPtrIndex = 0;
     size_t mergedArrayPtrIndex = 0;
 
-    std::array<int, SIZE * 2> mergedArray;
-    while (mergedArrayPtrIndex <= mergedArray.size()) {
+    std::vector<int> mergedArray;
+    while (mergedArrayPtrIndex <= 2 * firstSortedArray.size() - 1) {
         const bool allFirstSortedArrayValuesUsed =
-            firstSortedArrayPtrIndex > firstSortedArray.size();
+            firstSortedArrayPtrIndex > firstSortedArray.size() - 1;
         const bool useFirstSortedArrayValue =
             !allFirstSortedArrayValuesUsed &&
-            ((secondSortedArrayPtrIndex > secondSortedArray.size()) ||
+            ((secondSortedArrayPtrIndex > secondSortedArray.size() - 1) ||
              (firstSortedArray[firstSortedArrayPtrIndex] <
               secondSortedArray[secondSortedArrayPtrIndex]));
         if (useFirstSortedArrayValue) {
-            mergedArray[mergedArrayPtrIndex] =
-                firstSortedArray[firstSortedArrayPtrIndex];
+            mergedArray.push_back(firstSortedArray[firstSortedArrayPtrIndex]);
             ++firstSortedArrayPtrIndex;
         } else {
-            mergedArray[mergedArrayPtrIndex] =
-                secondSortedArray[secondSortedArrayPtrIndex];
+            mergedArray.push_back(secondSortedArray[secondSortedArrayPtrIndex]);
             ++secondSortedArrayPtrIndex;
         }
+
         ++mergedArrayPtrIndex;
     }
 
     return mergedArray;
 }
 
-template <size_t SIZE>
-void my::printArrayToStdOut(const std::array<int, SIZE>& array) {
+void my::printArrayToStdOut(const std::vector<int>& array) {
     std::cout << "[ ";
     for (const auto& element : array) {
         std::cout << element << " ";
     }
     std::cout << "] " << std::endl;
 }
-
 #+END_SRC
+
+#+RESULTS:
+| [ | 3 | 2 | 87 | 45 | 43 | 77 | 12 | 99 | 34 | 75 | 23 | 74 | 105 | 950 | 450 | 346 | ] |
+| [ | 2 | 3 | 12 | 23 | 34 | 43 | 45 | 74 | 75 | 77 | 87 | 99 | 105 | 346 | 450 | 950 | ] |
+
 ** Heap sort
 ** BST sort
 ** Counting sort
