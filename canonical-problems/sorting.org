@@ -123,7 +123,7 @@ template <size_t SIZE> void my::insertionSort(std::array<int, SIZE>& array) {
     for (int i = 1; i <= SIZE - 1; ++i) {
         const int key = array[i];
         for (int j = i - 1; j >= 0; --j) {
-            // if at any posize_t when going left, we find an element that is
+            // if at any point when going left, we find an element that is
             // smaller than the
             // key, we can safely break. This is because we know that the left
             // section is sorted
