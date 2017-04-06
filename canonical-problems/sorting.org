@@ -42,8 +42,8 @@ int main() {
 }
 
 template <size_t SIZE> void my::bubbleSort(std::array<int, SIZE>& array) {
-    for (int i = 0; i < SIZE - 1; ++i) {
-        for (int j = 0; j < SIZE - 1 - i; ++j) {
+    for (size_t i = 0; i < SIZE - 1; ++i) {
+        for (size_t j = 0; j < SIZE - 1 - i; ++j) {
             if (array[j] > array[j + 1]) {
                 swap(array, j, j + 1);
             }
@@ -123,7 +123,7 @@ template <size_t SIZE> void my::insertionSort(std::array<int, SIZE>& array) {
     for (int i = 1; i <= SIZE - 1; ++i) {
         const int key = array[i];
         for (int j = i - 1; j >= 0; --j) {
-            // if at any point when going left, we find an element that is
+            // if at any posize_t when going left, we find an element that is
             // smaller than the
             // key, we can safely break. This is because we know that the left
             // section is sorted
@@ -192,6 +192,8 @@ void printArrayToStdOut(const std::vector<int>& array);
 int main() {
     using namespace my;
 
+    // for this example, array size has to be of the form 2^n where n a
+    // non-negative integer
     std::vector<int> array = {3,  2,  87, 45, 43,  77,  12,  99,
                               34, 75, 23, 74, 105, 950, 450, 346};
 
@@ -203,11 +205,11 @@ int main() {
 }
 
 std::vector<int> my::mergeSort(std::vector<int>& array) {
-    size_t SIZE = array.size();
-    if (SIZE <= 1)
+    const size_t arraySize = array.size();
+    if (arraySize <= 1)
         return array;
 
-    const bool isArraySizeEven = (SIZE % 2 == 0);
+    const bool isArraySizeEven = (arraySize % 2 == 0);
     if (!isArraySizeEven) {
         std::cout << "Only even sized arrays supported for now" << std::endl;
         return array;
@@ -216,11 +218,11 @@ std::vector<int> my::mergeSort(std::vector<int>& array) {
     std::vector<int> leftArray;
     std::vector<int> rightArray;
 
-    for (size_t vectorIdx = 0; vectorIdx < array.size(); ++vectorIdx) {
-        if (vectorIdx <= array.size() / 2 - 1) {
-            leftArray.push_back(array[vectorIdx]);
+    for (size_t vectorIndex = 0; vectorIndex < array.size(); ++vectorIndex) {
+        if (vectorIndex <= array.size() / 2 - 1) {
+            leftArray.push_back(array[vectorIndex]);
         } else {
-            rightArray.push_back(array[vectorIdx]);
+            rightArray.push_back(array[vectorIndex]);
         }
     }
 
@@ -255,9 +257,11 @@ std::vector<int> my::mergeSortedArrays(std::vector<int>& firstSortedArray,
     while (mergedArrayPtrIndex <= 2 * firstSortedArray.size() - 1) {
         const bool allFirstSortedArrayValuesUsed =
             firstSortedArrayPtrIndex > firstSortedArray.size() - 1;
+        const bool allSecondSortedArrayValuesUsed =
+            secondSortedArrayPtrIndex > secondSortedArray.size() - 1;
         const bool useFirstSortedArrayValue =
             !allFirstSortedArrayValuesUsed &&
-            ((secondSortedArrayPtrIndex > secondSortedArray.size() - 1) ||
+            (allSecondSortedArrayValuesUsed ||
              (firstSortedArray[firstSortedArrayPtrIndex] <
               secondSortedArray[secondSortedArrayPtrIndex]));
         if (useFirstSortedArrayValue) {
@@ -281,12 +285,21 @@ void my::printArrayToStdOut(const std::vector<int>& array) {
     }
     std::cout << "] " << std::endl;
 }
+
 #+END_SRC
 
 #+RESULTS:
 | [ | 3 | 2 | 87 | 45 | 43 | 77 | 12 | 99 | 34 | 75 | 23 | 74 | 105 | 950 | 450 | 346 | ] |
 | [ | 2 | 3 | 12 | 23 | 34 | 43 | 45 | 74 | 75 | 77 | 87 | 99 | 105 | 346 | 450 | 950 | ] |
 
+*** Analysis
+Best, average and worst time is sigma(nlogn). Memory in the worst case is O(n). Note that we sometimes use
+sigma for best, theta for average and O for worst case complexities.
+
+*** Note
+A lot of code here is not production quality. This is just quick brainstorming to get things working. For instance,
+clearly using =std::vector= as an /array/ is a bad idea because of the cost of lookups. But it gets the point across as an example.
+** Quick sort
 ** Heap sort
 ** BST sort
 ** Counting sort
