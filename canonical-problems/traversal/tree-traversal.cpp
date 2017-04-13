@@ -89,7 +89,6 @@ void my::dfs_postorder(const my::TreeNode* aNode,
 }
 
 my::TreeNode* my::populateTree() {
-    // memory leak! use unique_ptrs
     auto nodeArray = new my::TreeNode[11];
     nodeArray[0].value = 77;
     nodeArray[1].value = 8;
