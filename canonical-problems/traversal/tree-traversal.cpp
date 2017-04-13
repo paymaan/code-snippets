@@ -139,7 +139,8 @@ my::TreeNode* my::populateTree() {
 void my::deleteTree(TreeNode* aRootNode) {
     // delete raw pointers in a post-order fashion
     if (aRootNode == nullptr)
-        return deleteTree(aRootNode->leftChild);
+        return;
+    deleteTree(aRootNode->leftChild);
     deleteTree(aRootNode->rightChild);
     delete aRootNode;
 }
