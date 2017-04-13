@@ -33,6 +33,10 @@ void dfs_preorder(const TreeNode* /*aNode*/,
 /// @brief Depth First Traversal: Postorder (Left, Right, Root)
 void dfs_postorder(const TreeNode* /*aNode*/,
                    std::function<void(const TreeNode&)> /*aVisitor*/);
+
+/// @brief Breadth First Traversal (aka level Order Traversal)
+void bfs_levelorder(const TreeNode* /*aNode*/,
+                    std::function<void(const TreeNode&)> /*aVisitor*/);
 }
 
 int main() {
@@ -40,14 +44,17 @@ int main() {
 
     const auto treeRootNode = populateTree();
     std::function<void(const TreeNode&)> visitor = my::visit;
-    std::cout << "Inorder traversal: ";
+    std::cout << "Depth First Traversal - Inorder: ";
     dfs_inorder(treeRootNode, visitor);
     std::cout << std::endl;
-    std::cout << "Preorder traversal: ";
+    std::cout << "Depth First Traversal - Preorder: ";
     dfs_preorder(treeRootNode, visitor);
     std::cout << std::endl;
-    std::cout << "Postorder traversal: ";
+    std::cout << "Depth First Traversal - Postorder: ";
     dfs_postorder(treeRootNode, visitor);
+    std::cout << std::endl;
+    std::cout << "Breadth First Traversal / Levelorder: ";
+    bfs_levelorder(treeRootNode, visitor);
     std::cout << std::endl;
 
     return 0;
@@ -88,6 +95,14 @@ void my::dfs_postorder(const my::TreeNode* aNode,
     return;
 }
 
+void my::bfs_levelorder(const my::TreeNode* aNode,
+                        std::function<void(const TreeNode&)> aVisitor) {
+    // todo
+    if (aNode)
+        aVisitor(*aNode);
+    return;
+}
+
 my::TreeNode* my::populateTree() {
     auto nodeArray = new my::TreeNode[11];
     nodeArray[0].value = 77;
@@ -123,9 +138,8 @@ my::TreeNode* my::populateTree() {
 
 void my::deleteTree(TreeNode* aRootNode) {
     // delete raw pointers in a post-order fashion
-  if (aRootNode == nullptr)
-    return
-  deleteTree(aRootNode->leftChild);
-  deleteTree(aRootNode->rightChild);
-  delete aRootNode;
+    if (aRootNode == nullptr)
+        return deleteTree(aRootNode->leftChild);
+    deleteTree(aRootNode->rightChild);
+    delete aRootNode;
 }
