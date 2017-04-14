@@ -16,6 +16,9 @@ void visit(const TreeNode& /*aNode*/);
 /// just a snippet
 TreeNode* populateTree();
 
+/// @brief Given a root node, returns the height of the tree
+int calculateTreeHeight(const my::TreeNode* /*aNode*/);
+
 /// @brief Counter part of populateTree which frees up the earlier allocated
 /// memory
 /// NOTE: Can use smart pointers here but not doing it for now since this is
@@ -33,6 +36,12 @@ void dfs_preorder(const TreeNode* /*aNode*/,
 /// @brief Depth First Traversal: Postorder (Left, Right, Root)
 void dfs_postorder(const TreeNode* /*aNode*/,
                    std::function<void(const TreeNode&)> /*aVisitor*/);
+
+/// @brief Helper for bfs_levelorder which does the heavy lifting by doing bfs
+/// traversal on a given level
+void bfs_levelorder_helper(const my::TreeNode* /*aNode&*/,
+                           std::function<void(const TreeNode&)> /*aVisitor*/,
+                           int /*aDesiredLevel*/, int /*aCurrentLevel*/);
 
 /// @brief Breadth First Traversal (aka level Order Traversal)
 void bfs_levelorder(const TreeNode* /*aNode*/,
@@ -95,12 +104,45 @@ void my::dfs_postorder(const my::TreeNode* aNode,
     return;
 }
 
+int my::calculateTreeHeight(const my::TreeNode* aNode) {
+    if (aNode == nullptr)
+        return 0;
+
+    int leftSubTreeHeight = calculateTreeHeight(aNode->leftChild);
+    int rightSubTreeHeight = calculateTreeHeight(aNode->rightChild);
+
+    int height = (leftSubTreeHeight > rightSubTreeHeight ? leftSubTreeHeight
+                                                         : rightSubTreeHeight) +
+                 1;
+    return height;
+}
+
+void my::bfs_levelorder_helper(const my::TreeNode* aNode,
+                               std::function<void(const TreeNode&)> aVisitor,
+                               const int aDesiredLevel,
+                               const int aCurrentLevel) {
+    if (aNode == nullptr)
+        return;
+
+    if (aCurrentLevel == aDesiredLevel) {
+        aVisitor(*aNode);
+        return;
+    }
+
+    bfs_levelorder_helper(aNode->leftChild, aVisitor, aDesiredLevel,
+                          aCurrentLevel + 1);
+    bfs_levelorder_helper(aNode->rightChild, aVisitor, aDesiredLevel,
+                          aCurrentLevel + 1);
+    return;
+}
+
 void my::bfs_levelorder(const my::TreeNode* aNode,
                         std::function<void(const TreeNode&)> aVisitor) {
-    // todo
-    if (aNode)
-        aVisitor(*aNode);
-    return;
+    // This is polynomial time; can use queues to make it linear.
+    const int height = calculateTreeHeight(aNode);
+    for (int level = 0; level <= height - 1; ++level) {
+        bfs_levelorder_helper(aNode, aVisitor, level, 0);
+    }
 }
 
 my::TreeNode* my::populateTree() {
