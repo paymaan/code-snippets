@@ -3,9 +3,9 @@
 
 namespace my {
 using setType = uint16_t;
-/// @brief Generate and prints all possible subsets for a set of the form
+/// @brief Generates and prints all possible subsets for a set of the form
 /// {0,1,2,...,n-1}
-///        "n" is the size of the set
+/// "n" is the size of the set
 void generateSubsets(const size_t aSize);
 void generateSubsets_impl(size_t aCurrIndex, const size_t aSize,
                           std::set<my::setType> aSubset);
@@ -13,7 +13,7 @@ void printSet(const std::set<setType> /*aSet*/);
 }
 
 int main() {
-  my::generateSubsets(3);
+    my::generateSubsets(3);
     return 0;
 }
 
