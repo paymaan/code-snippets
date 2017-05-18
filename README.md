@@ -8,4 +8,4 @@ The motivations for maintaining this are:
 * Solve puzzles/problems in different ways
 * Solve puzzles/problems in different languages
 
-All files will be [*.org*](http://orgmode.org) and will follow [literate programming](https://en.wikipedia.org/wiki/Literate_programming) paradigm.
+Most files will be [*.org*](http://orgmode.org) and will follow [literate programming](https://en.wikipedia.org/wiki/Literate_programming) paradigm.
