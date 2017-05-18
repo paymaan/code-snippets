@@ -35,7 +35,7 @@ namespace my {
     namespace min_char_palindrome {
         int min(const int a, const int b) { return a < b ? a : b; }
         int dp(const std::string& x, const int i, const int j) {
-            if (j == i || j == i - 1)
+            if (i == j)
                 return 0;
             return x[i] != x[j] ? 1 + min(dp(x, i + 1, j), dp(x, i, j - 1))
                                 : dp(x, i + 1, j - 1);
