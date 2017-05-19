@@ -2,6 +2,35 @@
 #include <string>
 
 namespace my {
+    namespace interleaving {
+        bool dp(const std::string& s1, const std::string& s2,
+                const std::string& s3, const int j, const int k, const int i) {
+            if (i < 0)
+                return s1.substr(0, j + 1).empty() &&
+                       s2.substr(0, k + 1).empty();
+            if (j < 0 && k < 0)
+                return s3.substr(0, i + 1).empty();
+            if (j < 0)
+                return s3.substr(0, i + 1) == s2.substr(0, k + 1);
+            if (k < 0)
+                return s3.substr(0, i + 1) == s1.substr(0, j + 1);
+
+            const bool dpI =
+                (s3[i] == s1[j] && dp(s1, s2, s3, j - 1, k, i - 1)) ||
+                (s3[i] == s2[k] && dp(s1, s2, s3, j, k - 1, i - 1));
+
+            return dpI;
+        }
+
+        /// Can string A/s1 be formed by interleaving B/s2 and C/s3?
+        bool isInterleave(const std::string& A, const std::string& B,
+                          const std::string& C) {
+            if (C.size() != A.size() + B.size())
+                return false;
+            return dp(A, B, C, A.size() - 1, B.size() - 1, C.size() - 1);
+        }
+    }
+
     namespace lowest_common_subsequence {
         std::string max(const std::string& s1, const std::string& s2) {
             if (s2.size() >= s1.size())
@@ -56,7 +85,11 @@ namespace my {
 //    -----------
 //    z: Ab3bd
 //    mcpCount: 2
-
+//    -----------
+//    s1: noUdRp97xFvpifeSXGwOjcVNhHo9N2D
+//    s2: 6iZItw9A3fj86uYx04tvWKLtl9BK
+//    s3: n6ioUdRpZ97ItwxF9Av3fj86upYxif0eS4XtvWKLtlG9wOBKjcVNhHo9N2D
+//    s3 interleaved form of s1 and s2? Yes
 int main() {
     using namespace my;
     const std::string x = "ABCBDAB";
@@ -75,5 +108,17 @@ int main() {
     std::cout << "z: " << z << std::endl;
     std::cout << "mcpCount: " << mcpCount << std::endl;
 
+    std::cout << "-----------" << std::endl;
+
+    const std::string s1 = "noUdRp97xFvpifeSXGwOjcVNhHo9N2D";
+    const std::string s2 = "6iZItw9A3fj86uYx04tvWKLtl9BK";
+    const std::string s3 = "n6ioUdRpZ97ItwxF9Av3fj86upYxif0eS4XtvWKLtlG9wOBKjcVNhHo9N2D";
+    const std::string isInterleavePossible =
+        interleaving::isInterleave(s1, s2, s3) ? "Yes" : "No";
+    std::cout << "s1: " << s1 << std::endl;
+    std::cout << "s2: " << s2 << std::endl;
+    std::cout << "s3: " << s3 << std::endl;
+    std::cout << "s3 interleaved form of s1 and s2? " << isInterleavePossible
+              << std::endl;
     return 0;
 }
