@@ -78,7 +78,7 @@ namespace my {
         }
     }
 
-    namespace unweighted_intervals {
+    namespace weighted_intervals {
         struct interval {
             interval(int start, int end, int weight)
                 : _start(start), _end(end), _weight(weight) {}
@@ -155,7 +155,7 @@ namespace my {
             return dpI;
         }
 
-        /// uis == unweighted interval subset
+        /// uis == weighted interval subset
         intervalList uis(intervalList& intervals) {
             sortIntervals(intervals);
             return dp(intervals, intervals.size() - 1);
@@ -219,20 +219,20 @@ int main() {
 
     std::cout << "-----------" << std::endl;
 
-    auto interval1 = unweighted_intervals::interval(1, 2, 50);
-    auto interval2 = unweighted_intervals::interval(3, 5, 90);
-    auto interval3 = unweighted_intervals::interval(6, 19, 100);
-    auto interval4 = unweighted_intervals::interval(2, 100, 200);
-    std::vector<unweighted_intervals::interval> intervals;
+    auto interval1 = weighted_intervals::interval(1, 2, 50);
+    auto interval2 = weighted_intervals::interval(3, 5, 90);
+    auto interval3 = weighted_intervals::interval(6, 19, 100);
+    auto interval4 = weighted_intervals::interval(2, 100, 200);
+    std::vector<weighted_intervals::interval> intervals;
     intervals.push_back(interval1);
     intervals.push_back(interval2);
     intervals.push_back(interval3);
     intervals.push_back(interval4);
     std::cout << "Interval list: " << std::endl;
-    unweighted_intervals::printIntervalList(intervals);
-    auto subsetIntervals = unweighted_intervals::uis(intervals);
+    weighted_intervals::printIntervalList(intervals);
+    auto subsetIntervals = weighted_intervals::uis(intervals);
     std::cout << "Optimum Subset interval list: " << std::endl;
-    unweighted_intervals::printIntervalList(subsetIntervals);
+    weighted_intervals::printIntervalList(subsetIntervals);
 
     return 0;
 }
