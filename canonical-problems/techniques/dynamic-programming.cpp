@@ -155,8 +155,8 @@ namespace my {
             return dpI;
         }
 
-        /// uis == weighted interval subset
-        intervalList uis(intervalList& intervals) {
+        /// wis == weighted interval subset
+        intervalList wis(intervalList& intervals) {
             sortIntervals(intervals);
             return dp(intervals, intervals.size() - 1);
         }
@@ -230,7 +230,7 @@ int main() {
     intervals.push_back(interval4);
     std::cout << "Interval list: " << std::endl;
     weighted_intervals::printIntervalList(intervals);
-    auto subsetIntervals = weighted_intervals::uis(intervals);
+    auto subsetIntervals = weighted_intervals::wis(intervals);
     std::cout << "Optimum Subset interval list: " << std::endl;
     weighted_intervals::printIntervalList(subsetIntervals);
 
