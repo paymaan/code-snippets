@@ -1,8 +1,10 @@
+#include <algorithm>
 #include <iostream>
 #include <string>
-
+#include <vector>
 namespace my {
     namespace interleaving {
+        // Non memoized DP
         bool dp(const std::string& s1, const std::string& s2,
                 const std::string& s3, const int j, const int k, const int i) {
             if (i < 0)
@@ -31,7 +33,7 @@ namespace my {
         }
     }
 
-    namespace lowest_common_subsequence {
+    namespace longest_common_subsequence {
         std::string max(const std::string& s1, const std::string& s2) {
             if (s2.size() >= s1.size())
                 return s2;
@@ -75,6 +77,90 @@ namespace my {
             return dp(x, 0, x.size() - 1);
         }
     }
+
+    namespace unweighted_intervals {
+        struct interval {
+            interval(int start, int end, int weight)
+                : _start(start), _end(end), _weight(weight) {}
+            int _start;
+            int _end;
+            int _weight;
+        };
+
+        using intervalList = std::vector<interval>;
+
+        void printIntervalList(intervalList& intervals) {
+            for (const auto interval : intervals) {
+                std::cout << "(" << interval._start << ", " << interval._end
+                          << ") with weight " << interval._weight << std::endl;
+            }
+        }
+
+        void sortIntervals(intervalList& intervals) {
+            auto comparator = [](interval x, interval y) /*-> bool*/ {
+                // sort in ascending order
+                return x._end < y._end;
+            };
+            std::sort(intervals.begin(), intervals.end(), comparator);
+        }
+
+        int sumOfIntervalWeights(intervalList intervals) {
+            int sum = 0;
+            for (const auto& interval : intervals)
+                sum += interval._weight;
+            return sum;
+        }
+
+        intervalList maxOfIntervals(intervalList intervalList1,
+                                    intervalList intervalList2) {
+            return sumOfIntervalWeights(intervalList1) >=
+                           sumOfIntervalWeights(intervalList2)
+                       ? intervalList1
+                       : intervalList2;
+        }
+
+        // note: intervals must be sorted before calling this function
+        // max ~ "latest"
+        // O(n) but can be O(logn) by using binary search
+        int maxNonOverLappingIntervalBefore(const intervalList& intervals,
+                                            const int idx) {
+            const auto intervalAtIdx = intervals[idx];
+            for (int i = idx - 1; i >= 0; --i) {
+                if (intervals[i]._end <= intervalAtIdx._start) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
+        // non-memoized
+        intervalList dp(const intervalList& intervals, const int i) {
+            intervalList subset;
+            if (i == 0) {
+                subset.push_back(intervals[0]);
+                return subset;
+            }
+
+            intervalList includedI;
+            // note: k < i by definition of maxNonOverLappingIntervalBefore
+            const int k = maxNonOverLappingIntervalBefore(intervals, i);
+            if (k >= 0)
+                includedI = dp(intervals, k);
+            includedI.push_back(intervals[i]);
+
+            intervalList excludedI = dp(intervals, i - 1);
+
+            intervalList dpI = maxOfIntervals(includedI, excludedI);
+
+            return dpI;
+        }
+
+        /// uis == unweighted interval subset
+        intervalList uis(intervalList& intervals) {
+            sortIntervals(intervals);
+            return dp(intervals, intervals.size() - 1);
+        }
+    }
 }
 
 // Code Output if you run this code:
@@ -90,12 +176,21 @@ namespace my {
 //    s2: 6iZItw9A3fj86uYx04tvWKLtl9BK
 //    s3: n6ioUdRpZ97ItwxF9Av3fj86upYxif0eS4XtvWKLtlG9wOBKjcVNhHo9N2D
 //    s3 interleaved form of s1 and s2? Yes
+//    -----------
+//    Interval list:
+//    (1, 2) with weight 50
+//    (3, 5) with weight 90
+//    (6, 19) with weight 100
+//    (2, 100) with weight 200
+//    Optimum Subset interval list:
+//    (1, 2) with weight 50
+//    (2, 100) with weight 200
 int main() {
     using namespace my;
     const std::string x = "ABCBDAB";
     const std::string y = "XYZAYZXBDCABC";
 
-    const std::string lcsStr = lowest_common_subsequence::lcs(x, y);
+    const std::string lcsStr = longest_common_subsequence::lcs(x, y);
     std::cout << "x   : " << x << std::endl;
     std::cout << "y   : " << y << std::endl;
     std::cout << "lcs : " << lcsStr << " with length = " << lcsStr.size()
@@ -112,7 +207,8 @@ int main() {
 
     const std::string s1 = "noUdRp97xFvpifeSXGwOjcVNhHo9N2D";
     const std::string s2 = "6iZItw9A3fj86uYx04tvWKLtl9BK";
-    const std::string s3 = "n6ioUdRpZ97ItwxF9Av3fj86upYxif0eS4XtvWKLtlG9wOBKjcVNhHo9N2D";
+    const std::string s3 =
+        "n6ioUdRpZ97ItwxF9Av3fj86upYxif0eS4XtvWKLtlG9wOBKjcVNhHo9N2D";
     const std::string isInterleavePossible =
         interleaving::isInterleave(s1, s2, s3) ? "Yes" : "No";
     std::cout << "s1: " << s1 << std::endl;
@@ -120,5 +216,23 @@ int main() {
     std::cout << "s3: " << s3 << std::endl;
     std::cout << "s3 interleaved form of s1 and s2? " << isInterleavePossible
               << std::endl;
+
+    std::cout << "-----------" << std::endl;
+
+    auto interval1 = unweighted_intervals::interval(1, 2, 50);
+    auto interval2 = unweighted_intervals::interval(3, 5, 90);
+    auto interval3 = unweighted_intervals::interval(6, 19, 100);
+    auto interval4 = unweighted_intervals::interval(2, 100, 200);
+    std::vector<unweighted_intervals::interval> intervals;
+    intervals.push_back(interval1);
+    intervals.push_back(interval2);
+    intervals.push_back(interval3);
+    intervals.push_back(interval4);
+    std::cout << "Interval list: " << std::endl;
+    unweighted_intervals::printIntervalList(intervals);
+    auto subsetIntervals = unweighted_intervals::uis(intervals);
+    std::cout << "Optimum Subset interval list: " << std::endl;
+    unweighted_intervals::printIntervalList(subsetIntervals);
+
     return 0;
 }
