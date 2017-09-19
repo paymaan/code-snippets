@@ -378,7 +378,8 @@ This outputs: 2 2 3 3 5 6 6 7 7 9 9 10 10 11 12 14
 
 *** Analysis
 The worst-case time complexity is O(n^2) since for every subarray (recursive function), we traverse the subarray again for partitioning.
-Paritioning itself is O(right - left). The space complexity is O(1) since this is an in place algorithm.
+Paritioning itself is O(right - left). The space complexity is O(log(n)) because although this is an in place algorithm, we still have
+to account for stack frame max height because of recursive calls.
 
 We can improve the time complexity of this algorithm using randomization, specifically by randomly picking the pivot using the following
 parition function as an example:
