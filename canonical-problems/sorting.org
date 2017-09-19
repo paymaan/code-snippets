@@ -315,6 +315,84 @@ Let's go back to the conquer step and walk through the recursive sorting of the 
 To sort the subarray [5, 2, 3], we choose 3 as the pivot. After partitioning, we have [2, 3, 5]. The subarray [2], to the left of the pivot, is a base case when we recurse, as is the subarray [5], to the right of the pivot.
 To sort the subarray [12, 7, 14, 9, 10, 11], we choose 11 as the pivot, resulting in [7, 9, 10] to the left of the pivot and [14, 12] to the right. After these subarrays are sorted, we have [7, 9, 10], followed by 11, followed by [12, 14].
 
+The code looks like follows (below). Note that pivot selection is important and there are many ways to pick one. Here, we'll just
+pick the first element in the subarray as the pivot.
+
+#+BEGIN_SRC C++ :exports both
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+void print(const vector<int>& vec) {
+    for (auto e : vec)
+        cout << e << " ";
+    cout << endl;
+}
+
+void swap(vector<int>& vec, int i, int j) {
+    int t = vec[i];
+    vec[i] = vec[j];
+    vec[j] = t;
+}
+
+/// parition around pivot and return pivot index
+int partition(vector<int>& vec, int left, int right) {
+    /// let's pick the first element as the pivot
+    int pivot = vec[left];
+    /// "i" is just the marker we use (marker approach / pointer approach)
+    int i = left + 1;
+    /// first, rearrange the array from A[left + 1, right] such
+    /// that elements less than pivot are on one side and greater on the other
+    /// note that pivot itself is A[left]
+    for (int j = left + 1; j <= right; ++j) {
+        if (vec[j] < pivot) {
+            swap(vec, i, j);
+            i++;
+        }
+    }
+    /// finally, put the pivot in its proper place
+    swap(vec, left, i - 1);
+    return i - 1;
+}
+
+void quick_sort(vector<int>& vec, int left, int right) {
+    if (right - left <= 0)
+        return;
+    int pivot_idx = partition(vec, left, right);
+    quick_sort(vec, left, pivot_idx - 1);
+    quick_sort(vec, pivot_idx + 1, right);
+}
+
+int main() {
+    vector<int> A = {9, 9, 7, 5, 11, 7, 12, 10, 3, 6, 2, 14, 2, 3, 10, 6};
+    quick_sort(A, 0, A.size() - 1);
+    print(A);
+    return 0;
+}
+#+END_SRC
+
+This outputs: 2 2 3 3 5 6 6 7 7 9 9 10 10 11 12 14
+
+*** Analysis
+The worst-case time complexity is O(n^2) since for every subarray (recursive function), we traverse the subarray again for partitioning.
+Paritioning itself is O(right - left). The space complexity is O(1) since this is an in place algorithm.
+
+We can improve the time complexity of this algorithm using randomization, specifically by randomly picking the pivot using the following
+parition function as an example:
+
+#+BEGIN_SRC C++ :exports both
+int rand_partition (int A[ ], int start, int end) {
+     // chooses position of pivot randomly by using rand() function.
+     int random = start + rand( )%(end-start +1 );
+     swap(A[random], A[start]);        // swap pivot with 1st element.
+     return partition(A, start, end);  // call the default partition function
+}
+#+END_SRC
+
+Now, the average time complexity becomes O(nlog(n)).
 ** Heap sort
 ** BST sort
 ** Counting sort
