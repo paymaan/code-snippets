@@ -45,30 +45,52 @@ class List {
             head = make_shared<ListNode>(x);
             head->next = temp_head;
         }
-	++length;
+        ++length;
     }
 
-    void pop_back() {}
+    /// O(n) but can be made O(1) if we track node before
+    /// tail i.e. second last node
+    void pop_back() {
+        if (!empty()) {
+            if (size() == 1) {
+                pop_front();
+                return;
+            }
+            auto it = head;
+            // after this loop, "it" will point to second
+            // last node
+            while (!(it && it->next && !it->next->next))
+                it = it->next;
+            it->next = nullptr;
+            --length;
+        }
+    }
 
-    void pop_front() {}
+    void pop_front() {
+        if (!empty()) {
+            head = head->next;
+            --length;
+        }
+    }
 
-    bool empty() {
+    bool empty() const {
         return length == 0;
     }
 
-    size_t size() {
+    size_t size() const {
         return length;
     }
 
-    void print() {
-        while (head) {
+    void print() const {
+        auto it = head;
+        while (it) {
             // print current node's value
-            cout << head->value;
-            const bool last_node = !head->next;
+            cout << it->value;
+            const bool last_node = !it->next;
             if (!last_node)
                 cout << " -> ";
-            // move head to next node
-            head = head->next;
+            // move it to next node
+            it = it->next;
         }
         cout << "\n";
     }
@@ -80,6 +102,15 @@ class List {
 };
 
 int main() {
+    // Output:
+    //     45 -> 30 -> 5 -> 15 -> 25 -> 50
+    //     size: 6
+    //     5 -> 15 -> 25 -> 50
+    //     size: 4
+    //     5 -> 15
+    //     size: 2
+    //     5
+    //     size: 1
     List list;
     list.push_back(5);
     list.push_back(15);
@@ -89,5 +120,17 @@ int main() {
     list.push_back(50);
     list.print();
     cout << "size: " << list.size() << "\n";
+    list.pop_front();
+    list.pop_front();
+    list.print();
+    cout << "size: " << list.size() << "\n";
+    list.pop_back();
+    list.pop_back();
+    list.print();
+    cout << "size: " << list.size() << "\n";
+    list.pop_back();
+    list.print();
+    cout << "size: " << list.size() << "\n";
+
     return 0;
 }
