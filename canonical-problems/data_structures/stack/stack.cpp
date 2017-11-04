@@ -51,6 +51,23 @@ class Stack {
 };
 
 int main() {
+    // Output:
+    //  15
+    //  10
+    //  5
+
+    //  10
+    //  5
+
+    //  4
+    //  2
+    //  10
+    //  5
+
+    //  10
+    //  5
+
+    //  5
     Stack stack;
     stack.push(5);
     stack.push(10);
