@@ -105,6 +105,11 @@ class List {
         return head->value;
     }
 
+    int tail_value() const {
+        assert(tail);
+        return tail->value;
+    }
+
   private:
     shared_ptr<ListNode> head;
     shared_ptr<ListNode> tail;
