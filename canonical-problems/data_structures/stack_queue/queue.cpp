@@ -54,16 +54,16 @@ class Queue {
 };
 
 int main() {
- // Output: 
- //    5, 10, 15
+    // Output:
+    //    5, 10, 15
 
- //    10, 15
+    //    10, 15
 
- //    10, 15, 2, 4
+    //    10, 15, 2, 4
 
- //    2, 4
+    //    2, 4
 
- //    4
+    //    4
     Queue queue;
     queue.push(5);
     queue.push(10);
