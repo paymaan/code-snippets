@@ -14,7 +14,8 @@ using namespace std; // not recommended obviously but saves
 /// Dynamic array is an array allocated  on the heap that
 /// is laid down contiguously in memory (invariant)
 /// It's sort of like std::vector in C++ STL
-/// It's size is dynamically modified (expanded and shrunk) at runtime
+/// It's size is dynamically modified (expanded and shrunk)
+/// at runtime
 /// In the future, I should also implement a toy SmallVector
 /// which
 /// switches between allocation on stack and heap for
@@ -29,6 +30,14 @@ template <typename T> class DynamicArray {
         , m_growth_factor(2)
         , m_ptr(make_unique<T[]>(init_capacity)) {
         throw_bad_alloc_if_needed();
+    }
+
+    // copy ctor
+    // this has to call ctor first to setup dynamic memory
+    DynamicArray(const DynamicArray<T>& that)
+        : DynamicArray(that.size()) {
+        for (int i = 0; i < that.size(); ++i)
+            this->push(that[i]);
     }
 
     bool empty() const {
@@ -78,6 +87,74 @@ template <typename T> class DynamicArray {
         return m_ptr[idx];
     }
 
+    // Equality operator (==)
+    // Inside class because left side object
+    // of this binary operator will always be of type
+    // DynamicArray
+    bool operator==(const DynamicArray<T>& that) const {
+        if (this->size() != that.size())
+            return false;
+        for (size_t i = 0; i < that.size(); ++i) {
+            if ((*this)[i] != that[i])
+                return false;
+        }
+        return true;
+    }
+
+    // Inequality operator (!=)
+    // similar to equality operator above
+    bool operator!=(const DynamicArray<T>& that) const {
+        return !(*this == that);
+    }
+
+    // Copy assignment operator (=)
+    // Return DynamicArray<T>& for a = b = c type chaining
+    DynamicArray<T>&
+    operator=(const DynamicArray<T>& that) {
+        // empty this if not equally sized to that
+        if (this->size() != that.size()) {
+            while (!this->empty())
+                this->pop();
+        }
+        // now push all elements from that to this
+        for (int i = 0; i < that.size(); ++i)
+            this->push(that[i]);
+
+        return *this;
+    }
+
+    // Support cout << arr;
+    // Since the left operand is DynamicArray<T>, we
+    // can't use member function; can use friend instead
+    // Note cout << arr is equivalent to
+    // ostream.operator<<(DynamicArray<T>
+    // where ostream is type of cout
+    // friends can access private data of "this" but
+    // are not considered member methods
+    // // Note that we can just call print which is a public
+    // // method internally so we don't really need friend
+    // // Also note that the friend definition can be
+    // // outside of the class
+    // // It's just here for convenience
+    friend ostream& operator<<(ostream& out,
+                               const DynamicArray<T>& arr) {
+        for (int i = 0; i < arr.size(); ++i)
+            cout << arr[i] << " ";
+        return out;
+    }
+
+    // Add operator overload
+    // arr + 5 would push 5 at the back of arr
+    // Just syncatic sugar that makes things more intuitive
+    // hopefully
+    // return by value since we're returning a local
+    // we can only return copy here
+    DynamicArray<T> operator+(const T& rhs) const {
+        DynamicArray<T> new_obj(*this);
+        new_obj.push(rhs);
+        return new_obj;
+    }
+
   private:
     size_t m_capacity; // capacity of block
     size_t m_size;     // number of elements in the block;
@@ -86,7 +163,7 @@ template <typename T> class DynamicArray {
     unique_ptr<T[]> m_ptr; // pointer to block of memory
 
     void expand_if_needed() {
-        if (size() == m_capacity) {
+        if (size() >= m_capacity) {
             const size_t new_capacity =
                 m_capacity * m_growth_factor;
             reallocate(new_capacity);
@@ -100,7 +177,7 @@ template <typename T> class DynamicArray {
     /// even if one element is added immediately after a
     /// shrink.
     void shrink_if_needed() {
-        if (size() == m_capacity / m_growth_factor) {
+        if (size() <= m_capacity / m_growth_factor) {
             const size_t new_capacity =
                 m_capacity / m_growth_factor;
             reallocate(new_capacity);
@@ -141,6 +218,37 @@ int main() {
         for (int i = 0; i < 140; ++i)
             arr.pop();
         arr.print();
+
+        DynamicArray<int> arr2;
+        for (int i = 1; i <= 10; ++i)
+            arr2.push(i);
+        arr2.print();
+        if (arr != arr2)
+            cout << "not equal\n";
+
+        DynamicArray<int> arr3(arr2); // calls copy ctor
+        arr3.print();
+        if (arr2 == arr3)
+            cout << "equal\n";
+
+        DynamicArray<int> arr4 =
+            arr; // still calls copy ctor
+        arr4.print();
+        if (arr == arr4)
+            cout << "equal\n";
+
+        DynamicArray<int> arr5;
+        arr5 = arr; // calls copy assignment operator
+        if (arr == arr5)
+            cout << "equal\n";
+
+        cout << arr5 << endl;
+
+        // arr5 + 157 would push 157 at the back of arr5
+        // cout would just then print the object returned
+        // by this addition
+        cout << arr5 + 157 << endl;
+
     } catch (const bad_alloc& e) {
         cout << "Allocation failed: " << e.what() << "\n";
     }
