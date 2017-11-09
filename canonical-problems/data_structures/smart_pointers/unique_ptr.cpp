@@ -28,29 +28,48 @@ using namespace std; // not recommended obviously but saves
 /// UniquePtr ptr(new T(T args));
 template <typename T> class UniquePtr {
   public:
-    UniquePtr(T* raw_ptr)
-        : m_raw_ptr(raw_ptr) {
-        // clients must provide a non-null pointer.
-        assert(raw_ptr);
-    }
+    UniquePtr(T* raw_ptr = nullptr)
+        : m_raw_ptr(raw_ptr) {}
 
     ~UniquePtr() {
-        delete m_raw_ptr;
+        if (m_raw_ptr)
+            delete m_raw_ptr;
     }
 
+    // copy ctor
+    // UniquePtr can never be copied because of
+    // "one owner" semantic
+    UniquePtr(const UniquePtr<T>&) = delete;
+
+    // copy assignment operator
+    // UniquePtr can never be assigned to another
+    // UniquePtr because of "one owner" semantic
+    UniquePtr<T>& operator=(const UniquePtr<T>&) = delete;
+
     T& operator*() {
+        assert(m_raw_ptr);
         return *m_raw_ptr;
     }
 
     T* operator->() {
+        assert(m_raw_ptr);
         return m_raw_ptr;
+    }
+
+    void grant_ownership(UniquePtr<T>& to) {
+        to.set_raw_ptr(m_raw_ptr);
+	m_raw_ptr = nullptr;
     }
 
   private:
     T* m_raw_ptr;
+
+    void set_raw_ptr(T* raw_ptr) {
+        m_raw_ptr = raw_ptr;
+    }
 };
 
-void print(const vector<int>& vec) {
+static void print(const vector<int>& vec) {
     for (const auto& e : vec)
         cout << e << " ";
     cout << "\n";
@@ -65,8 +84,14 @@ int main() {
     UniquePtr<vector<int>> ptr2(
         new vector<int>({42, 23, 77}));
     ptr2->push_back(99);
-    auto& vec = *ptr2;
-    print(vec);
+    print(*ptr2);
+
+    // Outputs
+    // Transfer ownership from ptr2 to ptr3
+    UniquePtr<vector<int>> ptr3;
+    ptr2.grant_ownership(ptr3);
+    ptr3->push_back(121);
+    print(*ptr3);
 
     return 0;
 }
