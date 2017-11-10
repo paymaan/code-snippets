@@ -86,7 +86,7 @@ int main() {
     ptr2->push_back(99);
     print(*ptr2);
 
-    // Outputs
+    // Outputs "42 23 77 99 121"
     // Transfer ownership from ptr2 to ptr3
     UniquePtr<vector<int>> ptr3;
     ptr2.grant_ownership(ptr3);
