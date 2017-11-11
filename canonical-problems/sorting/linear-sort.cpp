@@ -1,4 +1,6 @@
+#include <cmath>
 #include <cstring>
+#include <forward_list>
 #include <iostream>
 #include <vector>
 
@@ -46,6 +48,110 @@ vector<int> counting_sort(const vector<int>& arr,
     return sorted;
 }
 
+/// we make counting sort stable by using a singly linked
+/// list in our counts array/vector
+/// Unfortunately C++'s singly list does not have a
+/// O(1) push_back.. so will just use vector internally.
+vector<int> counting_sort_stable(const vector<int>& arr,
+                                 const size_t k) {
+    using List =
+        vector<int>; // replacement to singly linked list
+
+    // 1. Allocate O(k) array where k = range
+    // Using vector instead of raw array to avoid
+    // constant size k issues
+    vector<List> counts(k);
+
+    // 2. Traverse arr and update counters in counts array
+    for (auto key : arr) {
+        const auto& value =
+            key; // key == value in this example
+        counts[key].push_back(value);
+    }
+
+    // 3. Populate sorted result
+    vector<int> sorted;
+    for (int i = 0; i < k; ++i) {
+        const auto list = counts[i];
+        for (int j = 0; j < list.size(); ++j) {
+            sorted.push_back(list[j]);
+        }
+    }
+
+    return sorted;
+}
+
+/// assert idx < num.size()
+/// Example:
+/// 3 2 1 0  --- idx
+/// 5 2 3 7  --- num
+/// extract_digit(num, 0) -> 7
+/// extract_digit(num, 1) -> 3
+/// extract_digit(num, 2) -> 2
+/// extract_digit(num, 3) -> 5
+/// b = base, mostly 10 (as above)
+/// first, num is convered to another num in base b
+/// then we extract the digit at idx
+int extract_digit(int num, const int b, const int idx) {
+    int digit = -1;
+    for (int i = 0; i <= idx; ++i) {
+        digit = num % b;
+        num /= b;
+    }
+    return digit;
+}
+
+vector<int>
+counting_sort_stable_radix(const vector<int>& arr,
+                           const size_t k, const int b,
+                           const int d_idx) {
+    using List =
+        vector<int>; // replacement to singly linked list
+
+    // 1. Allocate O(k) array where k = range
+    // Using vector instead of raw array to avoid
+    // constant size k issues
+    vector<List> counts(b);
+
+    // 2. Traverse arr and update counters in counts array
+    for (auto value : arr) {
+        const int key = extract_digit(value, b, d_idx);
+        counts[key].push_back(value);
+    }
+
+    // 3. Populate sorted result
+    vector<int> sorted;
+    for (int i = 0; i < b; ++i) {
+        const auto list = counts[i];
+        for (int j = 0; j < list.size(); ++j) {
+            sorted.push_back(list[j]);
+        }
+    }
+
+    return sorted;
+}
+
+vector<int> radix_sort(const vector<int>& arr,
+                       const size_t k) {
+    const int n = arr.size();
+    const int b = n; // b (base) has to be O(n)
+    const int d =
+        (log(k) / log(b)) + 1; // d = max # of digits
+                               // for an integer in arr;
+                               // is floor(log base b of
+                               // k)
+    vector<int> sorted(arr); // can do in place arr as well
+                             // i.e directly use arr and
+                             // sort it
+
+    for (int d_idx = 0; d_idx < d; ++d_idx) {
+        sorted =
+            counting_sort_stable_radix(sorted, k, b, d_idx);
+    }
+
+    return sorted;
+}
+
 void print(const vector<int>& arr) {
     for (auto e : arr)
         cout << e << " ";
@@ -54,8 +160,13 @@ void print(const vector<int>& arr) {
 
 int main() {
     const size_t k = 100; // k = 100 for range [0, 99]
-    const vector<int> arr = {5, 2, 11, 45, 18, 13, 11, 75, 2, 2};
-    /// Output: "2 2 2 5 11 11 13 18 45 75"
+    const vector<int> arr = {5,  2,  11, 45, 18,
+                             13, 11, 75, 2,  2};
+
+    /// All outputs: "2 2 2 5 11 11 13 18 45 75"
     print(counting_sort(arr, k));
+    print(counting_sort_stable(arr, k));
+    print(radix_sort(arr, k));
+
     return 0;
 }
