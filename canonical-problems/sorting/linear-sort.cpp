@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <forward_list>
@@ -152,7 +153,37 @@ vector<int> radix_sort(const vector<int>& arr,
     return sorted;
 }
 
-void print(const vector<int>& arr) {
+void bucket_sort(vector<float>& arr) {
+    const size_t n = arr.size();
+    // 1. Create "n" empty buckets
+    // We have an array of vectors (or linked lists)
+    vector<vector<float>> buckets(n);
+    // 2. Put array elements in different buckets
+    // After this loop, element across buckets are sorted
+    // Only within a bucket, we need to sort elements
+    for (int i = 0; i < n; ++i) {
+        // Assuming that arr[i] is in range [0, 1]
+        // This implies that bucket_idx is [0, n]
+        // Note that we multiple by n and floor (int
+        // implicit)
+        // We can think of bucket_idx as key for arr[i]
+        const int bucket_idx = n * arr[i];
+        buckets[bucket_idx].push_back(arr[i]);
+    }
+    // 3. Sort individual buckets
+    // This step can be O(n) if input is uniformly
+    // distributed. That's why average time for bucket
+    // sort is O(n) but worst time is (n ^ 2)
+    for (int i = 0; i < n; ++i)
+        sort(buckets[i].begin(), buckets[i].end());
+    // 4. Traverse buckets array and update arr in place
+    int index = 0;
+    for (int i = 0; i < n; ++i)
+        for (int j = 0; j < buckets[i].size(); ++j)
+            arr[index++] = buckets[i][j];
+}
+
+template <typename T> void print(const vector<T>& arr) {
     for (auto e : arr)
         cout << e << " ";
     cout << "\n";
@@ -167,6 +198,16 @@ int main() {
     print(counting_sort(arr, k));
     print(counting_sort_stable(arr, k));
     print(radix_sort(arr, k));
+
+    cout << "-----"
+         << "\n";
+
+    /// Outputs: "0.1234 0.3434 0.565 0.656 0.665 0.897"
+    vector<float> arr2 = {0.897,  0.565, 0.656,
+                          0.1234, 0.665, 0.3434};
+    print(arr2);
+    bucket_sort(arr2);
+    print(arr2);
 
     return 0;
 }
