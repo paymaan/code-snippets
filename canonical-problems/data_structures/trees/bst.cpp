@@ -94,6 +94,8 @@ class BinarySearchTree {
     /// path to a leaf
     /// Leaf has a height of 0 by definition
     /// h(node) = max(h(left_subtree), h(right_subtree)) + 1
+    /// Same logic for generic binary tree, have to visit
+    /// all nodes to calculate height
     int height() const {
         return height_helper(m_root);
     }
