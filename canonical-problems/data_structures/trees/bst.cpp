@@ -90,6 +90,14 @@ class BinarySearchTree {
         return nullptr;
     }
 
+    /// Heigt of node = length (# edges) of longest downward
+    /// path to a leaf
+    /// Leaf has a height of 0 by definition
+    /// h(node) = max(h(left_subtree), h(right_subtree)) + 1
+    int height() const {
+        return height_helper(m_root);
+    }
+
   private:
     void insert_helper(shared_ptr<Node>& root,
                        const int val) {
@@ -133,11 +141,28 @@ class BinarySearchTree {
         return find_max_helper(root->right);
     }
 
+    /// We recurse till the very end i.e. one step next to
+    /// leaf when we reach null.. at this point, we return
+    /// -1, so that in the prev stack frame, the height of
+    /// leaf comes out to be (-1) + 1 = 0
+    /// https://stackoverflow.com/questions/19202692/complexity-for-the-function-maxheight-in-a-binary-tree
+    /// Time: O(n) where n is the number of nodes in the
+    /// tree
+    /// Space: O(h) since stack is bound by height of tree
+    int height_helper(const shared_ptr<Node>& root) const {
+        if (!root)
+            return -1;
+        return max(height_helper(root->left),
+                   height_helper(root->right)) +
+               1;
+    }
+
     shared_ptr<Node> m_root;
 };
 
 int main() {
     // Output:
+    // height: 6
     // found: 27
     // min: 2
     // max: 25
@@ -161,6 +186,8 @@ int main() {
     bst.insert(35);
     bst.insert(14);
     bst.insert(27);
+
+    cout << "height: " << bst.height() << endl;
 
     if (const auto n = bst.search(27))
         cout << "found: " << n->key << endl;
