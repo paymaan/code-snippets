@@ -195,6 +195,7 @@ int main() {
     // max: 25
     // Next larger to 15: 17
     // Prev smaller to 15: 14
+    // 2 2 5 5 7 14 14 15 15 15 15 17 27 27 35 35
 
     BinarySearchTree bst;
     bst.insert(5);
