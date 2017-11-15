@@ -6,6 +6,7 @@
 #include <cassert>
 #include <iostream>
 #include <memory>
+#include <vector>
 
 using namespace std; // not recommended obviously but saves
                      // some keystrokes for now :)
@@ -90,7 +91,8 @@ class BinarySearchTree {
         return nullptr;
     }
 
-    /// Heigt of node = length (# edges) of longest downward
+    /// Height of node = length (# edges) of longest
+    /// downward
     /// path to a leaf
     /// Leaf has a height of 0 by definition
     /// h(node) = max(h(left_subtree), h(right_subtree)) + 1
@@ -98,6 +100,13 @@ class BinarySearchTree {
     /// all nodes to calculate height
     int height() const {
         return height_helper(m_root);
+    }
+
+    /// just an inorder traversal (depth first)
+    vector<int> sorted_list() const {
+        vector<int> sorted;
+        sorted_list_helper(m_root, sorted);
+        return sorted;
     }
 
   private:
@@ -159,8 +168,24 @@ class BinarySearchTree {
                1;
     }
 
+    /// just an inorder traversal (depth first)
+    void sorted_list_helper(const shared_ptr<Node>& root,
+                            vector<int>& sorted) const {
+        if (!root)
+            return;
+        sorted_list_helper(root->left, sorted);
+        sorted.push_back(root->key);
+        sorted_list_helper(root->right, sorted);
+    }
+
     shared_ptr<Node> m_root;
 };
+
+void print(const vector<int>& list) {
+    for (auto e : list)
+        cout << e << " ";
+    cout << "\n";
+}
 
 int main() {
     // Output:
@@ -205,6 +230,9 @@ int main() {
 
     if (const auto n = bst.find_prev_smaller(15))
         cout << "Prev smaller to 15: " << n->key << endl;
+
+    const auto sorted_list = bst.sorted_list();
+    print(sorted_list);
 
     return 0;
 }
