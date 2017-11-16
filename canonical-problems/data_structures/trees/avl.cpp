@@ -29,6 +29,12 @@ class Node {
     shared_ptr<Node> parent;
 };
 
+void print(const vector<int>& list) {
+    for (auto e : list)
+        cout << e << " ";
+    cout << "\n";
+}
+
 /// AVL tree is a kind of a BST tree
 /// It's a superset of BST in terms of functionality
 /// It maintains BST invariant and AVL invariant that
@@ -111,7 +117,8 @@ class AVLTree {
         }
     }
 
-    void rebalance(shared_ptr<Node>& n) {
+    void rebalance(shared_ptr<Node>& given_node) {
+        shared_ptr<Node> n = given_node;
         while (n) {
             // update height
             update_height(n);
@@ -123,73 +130,103 @@ class AVLTree {
                     height_helper(
                         n->right->left)) { // right-right
                     left_rotate(n);
-                    cout << "yayy\n";
                 } else { // right-left
                     right_rotate(n->right);
                     left_rotate(n);
-                    cout << "yayy\n";
                 }
             } else if (balance <= -2) { // left heavy
                 if (height_helper(n->left->left) >=
                     height_helper(
                         n->left->right)) { // left-left
                     right_rotate(n);
-                    cout << "yayy\n";
                 } else { // left-right
                     left_rotate(n->left);
                     right_rotate(n);
-                    cout << "yayy\n";
                 }
             }
+
             // go upwards from n
             n = n->parent;
         }
     }
 
+    /// For rotate, we don't change "x" and "y" pointers
+    /// since that would complicate parent relantionship
+    /// between
+    /// "x" and "y" pointee objects as well as to the
+    /// outisde tree.
+    /// A better way is to just treat the pointee objects as
+    /// the same,
+    /// change their left and right pointers, and at the
+    /// end, swap key values.
+    /// We also need to change the parent relationships of
+    /// pointee children themselves
+    /// i.e. A,B,C in 6.006 notes.
     void left_rotate(shared_ptr<Node>& x) {
         if (x && x->right) {
             auto y = x->right;
-            x->right = y->left;
-            y->left = x;
+            // keep pointers i.e. x and y same but
+            // change pointee objects left and right
+            // pointers
+            x->right = y->right;
+            y->right = y->left;
+            y->left = x->left;
+            x->left = y;
+            // swap keys
+            int temp = y->key;
+            y->key = x->key;
+            x->key = temp;
+            // update A,B,C parents
+            if (y->left)
+                y->left->parent = y;
+            if (x->right)
+                x->right->parent = x;
         }
     }
 
+    /// Similar to left_rotate above
     void right_rotate(shared_ptr<Node>& y) {
         if (y && y->left) {
             auto x = y->left;
-            y->left = x->right;
-            x->right = y;
+
+            y->left = x->left;
+            x->left = x->right;
+            x->right = y->right;
+            y->right = x;
+
+            int temp = y->key;
+            y->key = x->key;
+            x->key = temp;
+
+            if (y->left)
+                y->left->parent = y;
+            if (x->right)
+                x->right->parent = x;
         }
     }
 
     shared_ptr<Node> m_root;
 };
 
-void print(const vector<int>& list) {
-    for (auto e : list)
-        cout << e << " ";
-    cout << "\n";
-}
-
 int main() {
+    // Output:
+    // height: 4
+    // 2 3 5 7 14 15 17 27 35 47 58
     AVLTree avl;
+
     avl.insert(5);
-    avl.insert(5);
-    avl.insert(15);
     avl.insert(15);
     avl.insert(2);
     avl.insert(7);
     avl.insert(14);
-    avl.insert(15);
     avl.insert(17);
-    avl.insert(15);
     avl.insert(35);
     avl.insert(27);
-    avl.insert(2);
-    avl.insert(35);
-    avl.insert(14);
-    avl.insert(27);
+    avl.insert(3);
+    avl.insert(47);
+    avl.insert(58);
 
+    cout << "height: " << avl.height() << endl;
     print(avl.sorted_list());
 
     return 0;
