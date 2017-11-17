@@ -10,11 +10,12 @@
 using namespace std; // not recommended obviously but saves
                      // some keystrokes for now :)
 
+template <typename T>
 class HashSet {
   public:
-    void insert(int key) {}
+    void insert(T key) {}
 
-    void remove(int key) {}
+    void remove(T key) {}
 
     bool empty() const {
         return false;
@@ -24,7 +25,7 @@ class HashSet {
         return 0;
     }
 
-    bool exists(int key) const {
+    bool exists(T key) const {
         return true;
     }
 
