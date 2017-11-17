@@ -48,6 +48,7 @@ int main() {
     /// m and n are sizes of the two arrays.
     vector<int> x1 = {5, 6, 8, 10};
     vector<int> x2 = {3, 4, 7, 9, 11, 14};
+    /// prints: 3 4 5 6 7 8 9 10 11 14
     print(merge_sorted(x1, x2));
 
     return 0;
