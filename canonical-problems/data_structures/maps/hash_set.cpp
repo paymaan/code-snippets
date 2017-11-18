@@ -72,7 +72,7 @@ template <typename T> class HashSet {
     }
 
   private:
-    int hash(const T& key) const {
+    int hash(const T& key) const { 
         // k % m would produce a hash in range [0, m - 1]
         // which fits with our buckets indices
         return key % m;
