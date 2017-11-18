@@ -18,8 +18,7 @@ class Node {
     Node()
         : children()
         , end_of_word(false) {}
-    unordered_map<char, shared_ptr<Node>>
-        children; // change to unordered_map
+    unordered_map<char, shared_ptr<Node>> children;
     bool end_of_word;
 };
 
