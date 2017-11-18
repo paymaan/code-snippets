@@ -4,7 +4,6 @@
 /// structures
 
 #include <iostream>
-#include <map>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -19,7 +18,7 @@ class Node {
     Node()
         : children()
         , end_of_word(false) {}
-    map<char, shared_ptr<Node>>
+    unordered_map<char, shared_ptr<Node>>
         children; // change to unordered_map
     bool end_of_word;
 };
