@@ -5,7 +5,6 @@
 using namespace std;
 
 /// Find median of two sorted arrays
-/// https://leetcode.com/problems/median-of-two-sorted-arrays/description/
 // Example 1:
 //   nums1 = [1, 3]
 //   nums2 = [2]
