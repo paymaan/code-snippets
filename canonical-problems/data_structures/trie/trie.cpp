@@ -160,6 +160,9 @@ int main() {
     // abc
     // abcde
     // abgl
+
+    // words with "ab" as prefix:
+    // abgl
     Trie trie;
     trie.insert("abc");
     trie.insert("abgl");
