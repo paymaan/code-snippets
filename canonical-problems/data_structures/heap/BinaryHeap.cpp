@@ -39,10 +39,11 @@ template <typename T> class BinaryHeap {
                                    const size_t j) {
         assert(i >= 0 && i < A.size() && j >= 0 &&
                j < A.size());
-        if (i > j)
-            return;
         const size_t left_idx = 2 * i + 1;
         const size_t right_idx = left_idx + 1;
+        // if any index is larger than j, return
+        if (max(i, max(left_idx, right_idx)) > j)
+            return;
         size_t largest_idx = i;
         if (left_idx < A.size() && A[left_idx] > A[i])
             largest_idx = left_idx;
