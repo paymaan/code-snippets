@@ -1,5 +1,5 @@
 # code-snippets
-A collection of my useful code snippets
+A collection of my code snippets
 
 The motivations for maintaining this are:
 * Have a collection of small toy examples that I can reuse in other projects before I forget them
