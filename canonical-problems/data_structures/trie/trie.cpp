@@ -86,7 +86,7 @@ class Trie {
     void list_words_helper(const shared_ptr<Node>& root,
                            vector<string>& list,
                            const std::string& prefix,
-                           const std::string temp) {
+                           const std::string& temp) {
         // keep adding complete words while traversing
         // the tree
         if (root->end_of_word) {
