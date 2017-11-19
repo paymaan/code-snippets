@@ -47,6 +47,46 @@ class Trie {
         }
     }
 
+    /// Remove has to be recurive since we
+    /// may need to remove parent nodes as well
+    /// Since we don't have parent pointers,
+    /// we'll traverse the tree in a recursive way
+    /// and delete parent needs while rolling up
+    /// the stack upon return
+    void remove(const std::string& s) {
+        (void)remove_helper(m_root, s, 0);
+    }
+
+    bool remove_helper(shared_ptr<Node> const root,
+                       const std::string& s,
+                       const size_t idx) {
+        // base case 1
+        // string not found
+        if (idx < s.size() &&
+            root->children.find(s[idx]) ==
+                root->children.end()) {
+            return false;
+        }
+        // base case 2
+        // string found
+        // we need to add end_of_word condition
+        // because we are removing by word, not
+        // removing by prefix
+        if (idx == s.size() && root->end_of_word) {
+            root->end_of_word = false;
+            return true;
+        }
+        for (const auto& child : root->children) {
+            const bool remove =
+                remove_helper(child.second, s, idx + 1);
+            if (remove) {
+                root->children.erase(s[idx]);
+                return root->children.empty();
+            }
+        }
+        return false;
+    }
+
     /// O(L) where L = prefix.size()
     /// Doesn't return true or false, but
     /// Returns pointer to child node (after prefix)
@@ -73,7 +113,8 @@ class Trie {
     }
 
     /// Given a prefix, list all words with that prefix
-    vector<string> list_words(const std::string& prefix) {
+    vector<string>
+    list_words(const std::string& prefix) const {
         vector<string> list;
         const auto ptr = prefix_search(prefix);
         if (!ptr)
@@ -86,21 +127,21 @@ class Trie {
     void list_words_helper(const shared_ptr<Node>& root,
                            vector<string>& list,
                            const std::string& prefix,
-                           const std::string& temp) {
+                           const std::string& temp) const {
         // keep adding complete words while traversing
         // the tree
         if (root->end_of_word) {
             list.push_back(prefix + temp);
         }
-        const auto children = root->children;
         // base case is when children is empty
         // no need to explicitly say that because
         // loop will just not run in that case
-        for (const auto child : children) {
+        for (const auto& child : root->children) {
             list_words_helper(child.second, list, prefix,
                               temp + child.first);
         }
     }
+
     shared_ptr<Node> const m_root;
 };
 
@@ -132,7 +173,9 @@ int main() {
         cout << "abcd prefix found" << endl;
     if (!trie.prefix_search("m"))
         cout << "m prefix not found" << endl;
+
     cout << endl;
+
     if (trie.word_search("abc"))
         cout << "abc word found" << endl;
     if (!trie.word_search("abcd"))
@@ -141,10 +184,18 @@ int main() {
         cout << "lmn word found" << endl;
     if (!trie.word_search("xyz"))
         cout << "xyz word not found" << endl;
+
     cout << endl;
-    const auto words = trie.list_words("ab");
+
     cout << "words with \"ab\" as prefix:" << endl;
-    for (const auto word : words)
+    for (const auto word : trie.list_words("ab"))
+        cout << word << endl;
+
+    cout << endl;
+
+    trie.remove("abc");
+    cout << "words with \"ab\" as prefix:" << endl;
+    for (const auto word : trie.list_words("ab"))
         cout << word << endl;
 
     return 0;
