@@ -28,6 +28,14 @@ double median_single(const vector<int>& A) {
         return A[A.size() / 2];
     }
 }
+
+/// Time complexity: O(log(min(M, N)))
+/// where M = A.size() and N = B.size()
+/// Space complexity: O(1)
+/// Brute force solution of merging A and B and
+/// finding median is O(M + N) in time and O(M + N)
+/// in space. We need auxiliary space for merged
+/// array.
 double median(const vector<int>& A, const vector<int>& B) {
     if (A.empty())
         return median_single(B);
@@ -82,7 +90,7 @@ double median(const vector<int>& A, const vector<int>& B) {
 int main() {
     const vector<int> A = {1, 3, 8, 9, 15};
     const vector<int> B = {7, 11, 18, 19, 21, 25};
-  
+
     cout << "median: " << median(A, B) << endl;
 
     return 0;
