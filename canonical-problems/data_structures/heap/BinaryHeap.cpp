@@ -5,6 +5,21 @@
 
 using namespace std;
 
+void print(const vector<int>& vec) {
+    for (auto e : vec)
+        cout << e << " ";
+    cout << endl;
+}
+
+template <typename T>
+void swap(vector<T>& A, size_t i, size_t j) {
+    assert(i >= 0 && i < A.size() && j >= 0 &&
+           j < A.size());
+    const T temp = A[i];
+    A[i] = A[j];
+    A[j] = temp;
+}
+
 /// Binary Heap (Max) Implementation
 /// Max heap
 /// Heap invariant: Every parent node's key
@@ -34,28 +49,28 @@ template <typename T> class BinaryHeap {
                             const size_t j) {
         assert(i >= 0 && i < A.size() && j >= 0 &&
                j < A.size());
-        const size_t left_idx = 2 * i + 1;
-        const size_t right_idx = left_idx + 1;
+        const size_t left_child_idx = left_idx(i);
+        const size_t right_child_idx = right_idx(i);
         // if any index is larger than j, return
-        if (max(i, max(left_idx, right_idx)) > j)
+        if (max(i, max(left_child_idx, right_child_idx)) >
+            j)
             return;
         size_t largest_idx = i;
-        if (left_idx < A.size() && A[left_idx] > A[i])
-            largest_idx = left_idx;
-        if (right_idx < A.size() &&
-            A[right_idx] > A[largest_idx])
-            largest_idx = right_idx;
+        if (left_child_idx < A.size() &&
+            A[left_child_idx] > A[i])
+            largest_idx = left_child_idx;
+        if (right_child_idx < A.size() &&
+            A[right_child_idx] > A[largest_idx])
+            largest_idx = right_child_idx;
         if (largest_idx != i) {
-            // swap
-            const T temp = A[i];
-            A[i] = A[largest_idx];
-            A[largest_idx] = temp;
+            swap(A, i, largest_idx);
             // call max_heapify downwards in the tree
             max_heapify(A, largest_idx, j);
         }
     }
 
-    /// Builds max heap from a given array
+    /// Converts given array to a valid
+    /// binary max heap
     /// i.e. converts A[0,...,n-1] to a max heap
     /// Naive time analysis: O(n * log(n))
     /// since O(n) calls to max_heapify
@@ -69,6 +84,12 @@ template <typename T> class BinaryHeap {
         }
     }
 
+    /// O(log(n)) in time
+    void insert(const T val) {
+        heap.push_back(numeric_limits<T>::lowest());
+        increase_val(heap.size() - 1, val);
+    }
+
     /// O(1) time
     bool empty() const {
         return heap.empty();
@@ -80,7 +101,42 @@ template <typename T> class BinaryHeap {
         return heap[0];
     }
 
+    /// O(1) time
+    size_t num_elems() const {
+        return heap.size();
+    }
+
   private:
+    /// O(log(n)) in time
+    /// Update the value at index i to a new
+    /// greater value, val.
+    void increase_val(size_t i, const T val) {
+        assert(i >= 0 && i < heap.size());
+        assert(val >= heap[i]);
+        heap[i] = val;
+        if (i <= 0)
+            return;
+        /// keep pushing the value to the parent
+        /// if needed
+        while (i >= 1 && heap[parent_idx(i)] < heap[i]) {
+            swap(heap, i, parent_idx(i));
+            // go to parent upwards
+            i = parent_idx(i);
+        }
+    }
+
+    static size_t parent_idx(const size_t child_idx) {
+        return (child_idx - 1) / 2;
+    }
+
+    static size_t left_idx(const size_t parent_idx) {
+        return 2 * parent_idx + 1;
+    }
+
+    static size_t right_idx(const size_t parent_idx) {
+        return left_idx(parent_idx) + 1;
+    }
+
     /// root is at i = 0
     /// parent(i) = floor((i - 1) / 2)
     /// left(i) = 2i + 1
@@ -98,26 +154,36 @@ template <typename T> class BinaryHeap {
 void heap_sort(vector<int>& A) {
     BinaryHeap<int>::build_max_heap(A);
     for (int i = A.size() - 1; i >= 1; --i) {
-        // swap
-        const int temp = A[0];
-        A[0] = A[i];
-        A[i] = temp;
+        swap(A, 0, i);
         // max heapify on the rest of the array
         // since invariant possibly broken there
         BinaryHeap<int>::max_heapify(A, 0, i - 1);
     }
 }
 
-void print(const vector<int>& vec) {
-    for (auto e : vec)
-        cout << e << " ";
-    cout << endl;
-}
-
 int main() {
-    // binary heap
+    // Binary heap
+    // Output:
+    // max elem: 76
+    // size: 11
     BinaryHeap<int> bh({});
-    // heap sort
+    bh.insert(5);
+    bh.insert(15);
+    bh.insert(20);
+    bh.insert(25);
+    bh.insert(3);
+    bh.insert(17);
+    bh.insert(76);
+    bh.insert(50);
+    bh.insert(33);
+    bh.insert(14);
+    bh.insert(23);
+    cout << "max elem: " << bh.max_elem() << endl;
+    cout << "size: " << bh.num_elems() << endl;
+
+    // Heap sort
+    // Output:
+    // 1 3 4 5 8 10
     vector<int> A = {5, 3, 10, 4, 8, 1};
     heap_sort(A);
     print(A);
