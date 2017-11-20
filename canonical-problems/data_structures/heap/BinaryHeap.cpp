@@ -29,14 +29,9 @@ template <typename T> class BinaryHeap {
     /// After max_heapify(i), tree rooted at i will
     /// be a max heap (and all of its child subtrees
     /// by definition).
-    void max_heapify(const size_t i) {
-        max_heapify_helper(heap, i, heap.size() - 1);
-    }
-
     /// Heapify A[i, j]
-    static void max_heapify_helper(vector<T>& A,
-                                   const size_t i,
-                                   const size_t j) {
+    static void max_heapify(vector<T>& A, const size_t i,
+                            const size_t j) {
         assert(i >= 0 && i < A.size() && j >= 0 &&
                j < A.size());
         const size_t left_idx = 2 * i + 1;
@@ -56,7 +51,7 @@ template <typename T> class BinaryHeap {
             A[i] = A[largest_idx];
             A[largest_idx] = temp;
             // call max_heapify downwards in the tree
-            max_heapify_helper(A, largest_idx, j);
+            max_heapify(A, largest_idx, j);
         }
     }
 
@@ -70,12 +65,19 @@ template <typename T> class BinaryHeap {
     static void build_max_heap(vector<T>& A) {
         const int n = A.size();
         for (int i = (n / 2) - 1; i >= 0; --i) {
-            max_heapify_helper(A, i, A.size() - 1);
+            max_heapify(A, i, A.size() - 1);
         }
     }
 
+    /// O(1) time
     bool empty() const {
         return heap.empty();
+    }
+
+    /// O(1) time
+    T max_elem() const {
+        assert(!heap.empty());
+        return heap[0];
     }
 
   private:
@@ -101,8 +103,8 @@ void heap_sort(vector<int>& A) {
         A[0] = A[i];
         A[i] = temp;
         // max heapify on the rest of the array
-        // since invariant possible broken there
-        BinaryHeap<int>::max_heapify_helper(A, 0, i - 1);
+        // since invariant possibly broken there
+        BinaryHeap<int>::max_heapify(A, 0, i - 1);
     }
 }
 
@@ -113,7 +115,9 @@ void print(const vector<int>& vec) {
 }
 
 int main() {
+    // binary heap
     BinaryHeap<int> bh({});
+    // heap sort
     vector<int> A = {5, 3, 10, 4, 8, 1};
     heap_sort(A);
     print(A);
