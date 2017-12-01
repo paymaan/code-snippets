@@ -85,6 +85,9 @@ print(fib_iterative(4))
 : 8
 : 8
 
+Note we take fib = 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, ...
+Also, indexing is zero based i.e. fib(0) = 1, fib(1) = 1, fib(2) = 3 and so on.
+
 Now, let's modify iterative solution to solve this problem:
 
 #+BEGIN_SRC python :results output :exports both
