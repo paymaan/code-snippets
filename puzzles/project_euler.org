@@ -1,0 +1,25 @@
+#+TITLE: Project Euler Problems
+#+AUTHOR: Syed Paymaan Raza
+
+Trying out some [[https://projecteuler.net/archives][project euler problems]] here. Mostly I do this
+to learn a language. It's been a while since I coded in Python
+so I thought to implement a few project euler problem solutions.
+I have done a few before so hopefully this should be relatively
+quick.
+
+Used Python cheat sheets to revise concepts:
+1) [[https://ehmatthes.github.io/pcc/cheatsheets/README.html][Matthes Python Cheat Sheets]]
+2) [[https://github.com/ehmatthes/pcc/releases/download/v1.0.0/beginners_python_cheat_sheet_pcc_all.pdf][Matthes Python Cheat Sheets - ALL]]
+3) [[https://perso.limsi.fr/pointal/_media/python:cours:mementopython3-english.pdf][Limsi Python Cheat Sheet]]
+4) [[https://www.cheatography.com/davechild/cheat-sheets/python/][Dave Child Python Cheat Sheet]]
+
+Remember, in Python, whitespace matters!
+
+** [[https://projecteuler.net/problem%3D1][Multiples of 3 and 5]]
+#+BEGIN_SRC python :results output :exports both
+print("todo")
+#+END_SRC
+
+#+RESULTS:
+: todo
+
