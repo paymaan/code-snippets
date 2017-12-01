@@ -17,9 +17,37 @@ Remember, in Python, whitespace matters!
 
 ** [[https://projecteuler.net/problem%3D1][Multiples of 3 and 5]]
 #+BEGIN_SRC python :results output :exports both
-print("todo")
+def is_multiple_of(num, divisor):
+    return num % divisor == 0
+
+def p1():
+    sum = 0
+    for i in range(0, 1000):
+        if is_multiple_of(i, 3) or is_multiple_of(i, 5):
+            sum += i
+    return sum
+         
+print(p1())
 #+END_SRC
 
 #+RESULTS:
-: todo
+: 233168
+
+Time complexity: O(n) where n = 1000; so really O(1) unless
+we want 1000 to be variable.
+Space complexity: O(1)
+
+Another approach using list comprehensions:
+#+BEGIN_SRC python :results output :exports both
+def is_multiple_of(num, divisor):
+    return num % divisor == 0
+
+def p1_list_comprehensions():
+    return sum(x for x in range(1000) if is_multiple_of(x, 3) or is_multiple_of(x, 5))
+
+print(p1_list_comprehensions())
+#+END_SRC
+
+#+RESULTS:
+: 233168
 
