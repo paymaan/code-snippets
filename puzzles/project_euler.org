@@ -51,3 +51,64 @@ print(p1_list_comprehensions())
 #+RESULTS:
 : 233168
 
+** [[https://projecteuler.net/problem%3D2][Even Fibonacci Numbers]]
+First, let's see simple fibonacci:
+#+BEGIN_SRC python :results output :exports both
+""" Exp time (solve recurrence), O(n) space due to stack frames """
+def fib_recursive(n):
+    if n == 0:
+        return 1
+    if n == 1:
+        return 2
+    return fib_recursive(n - 1) + fib_recursive(n - 2)
+
+""" O(n) time, O(1) space """
+def fib_iterative(n):
+    fib_n_minus_two = 1
+    fib_n_minus_one = 2
+    if n == 0:
+        return fib_n_minus_two
+    if n == 1:
+        return fib_n_minus_one
+    fib_n = -1
+    for i in range(2, n + 1):
+        fib_n = fib_n_minus_one + fib_n_minus_two
+        fib_n_minus_two = fib_n_minus_one
+        fib_n_minus_one = fib_n
+    return fib_n
+
+print(fib_recursive(4))
+print(fib_iterative(4))
+#+END_SRC
+
+#+RESULTS:
+: 8
+: 8
+
+Now, let's modify iterative solution to solve this problem:
+
+#+BEGIN_SRC python :results output :exports both
+def is_even(num):
+    return num % 2 == 0
+
+def p2(upper_bound):
+    fib_n_minus_two = 1
+    fib_n_minus_one = 2
+    fib_n = -1
+    sum = 2
+    while (fib_n < upper_bound):
+        fib_n = fib_n_minus_one + fib_n_minus_two
+        fib_n_minus_two = fib_n_minus_one
+        fib_n_minus_one = fib_n
+        if (is_even(fib_n)):
+            sum += fib_n
+    return sum
+
+print(p2(4 * (10 ** 6)))
+#+END_SRC
+
+#+RESULTS:
+: 4613732
+
+Time is O(upper_bound) but O(1) if upper_bound is constant. Space is O(1).
+
