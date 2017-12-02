@@ -131,7 +131,7 @@ print(p3(600851475143))
 
 #+RESULTS:
 : 6857
-** Largest palindrome product
+** [[https://projecteuler.net/problem%3D4][Largest palindrome product]]
 #+BEGIN_SRC python :results output :exports both
 def p4():
     all_palindromes = [i * j
@@ -145,4 +145,5 @@ print(p4())
 
 #+RESULTS:
 : 906609
+
 
