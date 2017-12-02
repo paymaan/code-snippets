@@ -12,6 +12,8 @@ Used Python cheat sheets to revise concepts:
 2) [[https://github.com/ehmatthes/pcc/releases/download/v1.0.0/beginners_python_cheat_sheet_pcc_all.pdf][Matthes Python Cheat Sheets - ALL]]
 3) [[https://perso.limsi.fr/pointal/_media/python:cours:mementopython3-english.pdf][Limsi Python Cheat Sheet]]
 4) [[https://www.cheatography.com/davechild/cheat-sheets/python/][Dave Child Python Cheat Sheet]]
+5) [[https://developers.google.com/edu/python/strings][Google - Python Strings]]
+6) [[https://docs.python.org/2/whatsnew/2.3.html#extended-slices][Python String Extended Slice]]
 
 Remember, in Python, whitespace matters!
 
@@ -129,4 +131,18 @@ print(p3(600851475143))
 
 #+RESULTS:
 : 6857
+** Largest palindrome product
+#+BEGIN_SRC python :results output :exports both
+def p4():
+    all_palindromes = [i * j
+                       for i in range(100, 1000)
+                       for j in range(100, 1000)
+                       if str(i * j) == str(i * j)[::-1]]
+    return max(all_palindromes)                    
+    
+print(p4())
+#+END_SRC
+
+#+RESULTS:
+: 906609
 
