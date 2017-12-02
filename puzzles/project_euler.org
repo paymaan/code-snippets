@@ -145,5 +145,22 @@ print(p4())
 
 #+RESULTS:
 : 906609
+** [[https://projecteuler.net/problem%3D5][Smallest multiple]]
+#+BEGIN_SRC python :results output :exports both
+import fractions
 
+def lcm(a, b):
+    return a * b / fractions.gcd(a, b)
+    
+def p5():
+    ans = 1
+    for i in range(1, 21):
+        ans = lcm(ans, i)
+    return ans
+
+print(p5())   
+#+END_SRC
+
+#+RESULTS:
+: 232792560
 
