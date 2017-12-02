@@ -114,4 +114,19 @@ print(p2(4 * (10 ** 6)))
 : 4613732
 
 Time is O(upper_bound) but O(1) if upper_bound is constant. Space is O(1).
+** [[https://projecteuler.net/problem%3D3][Largest prime factor]]
+#+BEGIN_SRC python :results output :exports both
+def p3(n):
+    i = 2
+    while i * i < n:
+        while n % i == 0:
+            n = n / i
+        i = i + 1
+    return n
+
+print(p3(600851475143))
+#+END_SRC
+
+#+RESULTS:
+: 6857
 
