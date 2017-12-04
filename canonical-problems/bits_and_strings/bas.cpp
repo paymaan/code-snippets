@@ -35,17 +35,72 @@ using namespace std;
 /// Time: O(min bits needed) = O(ceil(log(n+1)))
 /// where n = input number
 /// Space: O(1) except copying input x
+// short CountBits(unsigned int x) {
+//     short num_1_bits = 0;
+//     while (x) {
+//         num_1_bits += x & 1;
+//         x = x >> 1; // more efficient than x = x / 2
+//     }
+//     return num_1_bits;
+// }
+
+/// Approach 3
+/// Approach 2 but with optimization that
+/// makes time complexity O(k) where k is
+/// number of 1 bits in x.
+/// Optimization is:
+/// x & (x - 1) erases the lowest 1 bit in x
+/// Similarly,
+/// x & ~(x - 1) isolated the lowest 1 bit in x
 short CountBits(unsigned int x) {
     short num_1_bits = 0;
     while (x) {
-        num_1_bits += x & 1;
-        x = x >> 1; // more efficient than x = x / 2
+        ++num_1_bits;
+        x = x & (x - 1);
     }
     return num_1_bits;
 }
 
+/// Parity(5) = 0 because 5 = (101) i.e.
+/// even number of 1's. Parity(7) = 1
+/// because (111) has 3 or odd # of 1's.
+/// Approach 1
+/// Simple masking and shifting, use
+/// res = res XOR (bit is 1) which would
+/// result in 1 iff # bits that are 1 are odd.
+// short Parity(unsigned long x) {
+//     short result = 0;
+//     while (x) {
+//         result ^= x & 1;
+//         x >>= 1;
+//     }
+//     return result;
+// }
+
+/// Approach 2
+/// O(k) in time where k is number of 1 bits in x
+// short Parity(unsigned long x) {
+//     short result = 0;
+//     while (x) {
+//         result ^= 1;
+//         x &= x - 1; // same optimization as before
+//     }
+//     return result;
+// }
+
+/// Approach 3
+/// Very optimized: O(log(n))
+/// n = number of bits in x
+/// Can be better than approach 2 because
+/// approach 2 has worst case O(n) if all 1's.
 short Parity(unsigned long x) {
-    return 0;
+  x ^= x >> 32;
+  x ^= x >> 16;
+  x ^= x >> 8;
+  x ^= x >> 4;
+  x ^= x >> 2;
+  x ^= x >> 1;    
+  return x & 1;
 }
 
 long SwapBits(long x, int i, int j) {
@@ -91,5 +146,6 @@ string ConvertBase(const string& num_as_string, int b1,
 
 int main() {
     cout << CountBits(5) << endl;
+    cout << Parity(7) << endl;
     return 0;
 }
