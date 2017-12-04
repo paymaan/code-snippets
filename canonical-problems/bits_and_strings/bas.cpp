@@ -94,13 +94,13 @@ short CountBits(unsigned int x) {
 /// Can be better than approach 2 because
 /// approach 2 has worst case O(n) if all 1's.
 short Parity(unsigned long x) {
-  x ^= x >> 32;
-  x ^= x >> 16;
-  x ^= x >> 8;
-  x ^= x >> 4;
-  x ^= x >> 2;
-  x ^= x >> 1;    
-  return x & 1;
+    x ^= x >> 32;
+    x ^= x >> 16;
+    x ^= x >> 8;
+    x ^= x >> 4;
+    x ^= x >> 2;
+    x ^= x >> 1;
+    return x & 1;
 }
 
 long SwapBits(long x, int i, int j) {
