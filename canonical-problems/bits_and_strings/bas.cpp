@@ -3,6 +3,13 @@
 
 using namespace std;
 
+/// Common masking tricks:
+/// Extracting ith bit in x:
+/// (x >> i) & 1 will give 1 or 0
+/// if ith bit is 1 or 0.
+/// Extracting ith bit in position:
+/// x & (1 << i)
+
 /// CountBits(5) = 2 because (5)_10 = (101)_2 #1's = 2
 
 /// Approach 1
