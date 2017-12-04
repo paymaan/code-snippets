@@ -132,8 +132,26 @@ long SwapBits(long x, int i, int j) {
     return x;
 }
 
-long ReverseBits(long x) {
-    return 0;
+/// ReverseBits(12) is 3
+/// because 12 = 1100
+/// reverse is 0011
+/// which is 3
+/// Assuming x is at most 64 bits, we need
+/// to swap 32 bits on each side with
+/// each other. Notice, in swap, we just need
+/// to swap one half with the other. If odd,
+/// the central element is untouched but here we
+/// don't have that case.
+/// Note: if x == ReverseBits(x), then
+/// x is bitwise palindrome.
+/// Parameterizing on "N" min bits
+/// e.g. 12 has 4 min bits
+/// Index: [0, N - 1]
+long ReverseBits(long x, int N) {
+    for (int i = 0; i <= (N / 2) - 1; ++i) {
+        x = SwapBits(x, i, (N - 1) - i);
+    }
+    return x;
 }
 
 unsigned Multiply(unsigned x, unsigned y) {
@@ -173,5 +191,6 @@ int main() {
     cout << CountBits(5) << endl;
     cout << Parity(7) << endl;
     cout << SwapBits(12, 3, 1) << endl;
+    cout << ReverseBits(12, 4) << endl;
     return 0;
 }
