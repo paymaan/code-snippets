@@ -174,8 +174,24 @@ double Power(double x, int y) {
     return 0;
 }
 
+/// Reverse in base 10
+/// Reverse(547) = 745
+/// Reverse(-926) = -629
+/// Note x /= 10 basically chops off
+/// the last digit in base 10 just like
+/// x /= 2 (or x >> 1) chops off the last bit.
+/// Extracting the last digit in base 10
+/// is done using x % 10
 long Reverse(int x) {
-    return 0;
+    bool is_neg = x < 0;
+    int result = 0;
+    if (is_neg)
+        x = abs(x);
+    while (x) {
+        result = (result * 10) + (x % 10);
+        x /= 10;
+    }
+    return is_neg ? -1 * result : result;
 }
 
 bool IsPalindromeNumber(int x) {
@@ -200,5 +216,6 @@ int main() {
     cout << Parity(7) << endl;
     cout << SwapBits(12, 3, 1) << endl;
     cout << ReverseBits(12, 4) << endl;
+    cout << Reverse(73569) << endl;
     return 0;
 }
