@@ -147,6 +147,7 @@ long SwapBits(long x, int i, int j) {
 /// Parameterizing on "N" min bits
 /// e.g. 12 has 4 min bits
 /// Index: [0, N - 1]
+/// Note: N has to be even here.
 long ReverseBits(long x, int N) {
     for (int i = 0; i <= (N / 2) - 1; ++i) {
         x = SwapBits(x, i, (N - 1) - i);
@@ -158,10 +159,17 @@ unsigned Multiply(unsigned x, unsigned y) {
     return 0;
 }
 
+unsigned Add(unsigned a, unsigned b) {
+    return 0;
+}
+
 unsigned Divide(unsigned x, unsigned y) {
     return 0;
 }
 
+/// Power(2, 3) = 8 i.e. 2^3
+/// Basically just exponent
+/// Implement without any native c++ operators
 double Power(double x, int y) {
     return 0;
 }
