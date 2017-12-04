@@ -103,8 +103,26 @@ short Parity(unsigned long x) {
     return x & 1;
 }
 
+/// Swap(12, 3, 1) = 6 because
+/// 12 = 1100
+/// Swapping 3th and 1st index:
+/// 0110 which is 6
+/// Notice indexing is 0 based from right
+/// to left i.e. LSB to MSB
+/// O(1) time and space
 long SwapBits(long x, int i, int j) {
-    return 0;
+    // We only need to swap if ith and jth
+    // bits differ.
+    if (((x >> i) & 1) != ((x >> j) & 1)) {
+        // We need to swap now.. swapping is equivalent
+        // to just flipping the ith and jth bits to their
+        // complements i.e. 1 -> 0 and 0 -> 1.
+        // This can be done easily using XOR with 1 since
+        // XOR(0, 1) = 1 and XOR(1, 1) = 0
+        unsigned long bit_mask = (1 << i) | (1 << j);
+        x ^= bit_mask;
+    }
+    return x;
 }
 
 long ReverseBits(long x) {
@@ -147,5 +165,6 @@ string ConvertBase(const string& num_as_string, int b1,
 int main() {
     cout << CountBits(5) << endl;
     cout << Parity(7) << endl;
+    cout << SwapBits(12, 3, 1) << endl;
     return 0;
 }
