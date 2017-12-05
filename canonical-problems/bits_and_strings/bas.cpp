@@ -249,6 +249,13 @@ int StringToInt(const string& s) {
     return stoi(s);
 }
 
+/// Note on base number system
+/// The base number system generalizes the decimal
+/// number system: the string "a_k-1 a_k-2 ... a_1 1_0",
+/// where 0 <= a_i < b and 0 <= i <= k - 1
+/// The string mentioned above denotes in base-b the integer
+/// (a_0 * b^0) + (a_1 * b^1) + ... + (a_k-1 * b^k-1)
+
 /// Implementation without using standard
 /// library functions.
 /// Remember, a base 10 number d3d2d1d0 encodes the number:
