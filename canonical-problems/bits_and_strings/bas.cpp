@@ -1,5 +1,7 @@
+#include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -177,11 +179,14 @@ double Power(double x, int y) {
 /// Reverse in base 10
 /// Reverse(547) = 745
 /// Reverse(-926) = -629
-/// Note x /= 10 basically chops off
-/// the last digit in base 10 just like
-/// x /= 2 (or x >> 1) chops off the last bit.
-/// Extracting the last digit in base 10
-/// is done using x % 10
+/// 1) Note x /= 10 basically chops off
+///    the last digit in base 10 just like
+///    x /= 2 (or x >> 1) chops off the last bit.
+///    i.e. x / 10 is x without its last digit.
+///    The last digit itself can be found using (2).
+/// 2) Extracting the last digit in base 10
+///    is done using x % 10 i.e. x mod with 10
+///    gives the last digit in a number.
 long Reverse(int x) {
     bool is_neg = x < 0;
     int result = 0;
@@ -198,12 +203,94 @@ bool IsPalindromeNumber(int x) {
     return false;
 }
 
-string IntToString(int x) {
-    return "";
+/// Convert char to its ascii value
+int AsciiValue(char c) {
+    return int(c);
 }
 
+/// Convert char to int
+/// CharToInt('7') = 7
+int CharToInt(char c) {
+    return int(c) - int('0');
+}
+
+/// Convert int to char
+/// IntToChar(7) = '7'
+char IntToChar(int x) {
+    return char(x + int('0'));
+}
+
+/// IntToString(45) = "45"
+string IntToString(int x) {
+    // Using C++11 to_string in <string>
+    return to_string(x);
+}
+
+/// Implementation without using standard
+/// library functions.
+string MyIntToString(int x) {
+    bool is_neg = x < 0;
+    string str = "";
+    while (x) {
+        str += IntToChar(x % 10);
+        x /= 10;
+    }
+    // make negative if needed
+    if (is_neg)
+        str += '-';
+    // reverse string
+    str = {str.rbegin(), str.rend()};
+    return str;
+}
+
+/// StringToInt("45") = 45
 int StringToInt(const string& s) {
-    return -1;
+    /// Using C++11 stoi in <string>
+    return stoi(s);
+}
+
+/// Implementation without using standard
+/// library functions.
+/// Remember, a base 10 number d3d2d1d0 encodes the number:
+/// (d3 * 10^3) + (d2 * 10^2) + (d1 * 10^1) + (d0 * 10^0)
+/// e.g. 475 = (4 * 100) + (7 * 10) + (5 * 1)
+///          = 400 + 70 + 5
+///          = 5
+/// This is similar to base 2 where we just have
+/// (2 ^ n) instead of (10 ^ n)
+// int MyStringToInt(const string& s) {
+//     int num = 0;
+//     for (int i = s.size() - 1; i >= 0; --i) {
+//         int exp = (s.size() - 1) - i;
+//         num += CharToInt(s[i]) * pow(10, exp);
+//     }
+//     return num;
+// }
+
+/// A more elegant solution is to go from left to right
+/// and add keep multiplying by 10 each time. For example:
+/// Number = 475, res = 0
+/// res = (0 * 10) + 4 = 4
+/// res = (4 * 10) + 7 = 47
+/// res = (47 * 10) + 5 = 475
+// int MyStringToInt(const string& s) {
+//     int num = 0;
+//     for (int i = 0; i < s.size(); ++i) {
+//         num = (num * 10) + CharToInt(s[i]);
+//     }
+//     return num;
+// }
+
+// Now just adding negative number capability:
+int MyStringToInt(const string& s) {
+    if (s.empty())
+        return -1;
+    const bool is_neg = s[0] == '-';
+    int num = 0;
+    for (int i = is_neg ? 1 : 0; i < s.size(); ++i) {
+        num = (num * 10) + CharToInt(s[i]);
+    }
+    return is_neg ? -1 * num : num;
 }
 
 string ConvertBase(const string& num_as_string, int b1,
@@ -217,5 +304,12 @@ int main() {
     cout << SwapBits(12, 3, 1) << endl;
     cout << ReverseBits(12, 4) << endl;
     cout << Reverse(73569) << endl;
+    cout << AsciiValue('B') << endl;
+    cout << CharToInt('7') << endl;
+    cout << IntToChar(5) << endl;
+    cout << IntToString(45) << endl;
+    cout << MyIntToString(45) << endl;
+    cout << StringToInt("12") << endl;
+    cout << MyStringToInt("12") << endl;
     return 0;
 }
