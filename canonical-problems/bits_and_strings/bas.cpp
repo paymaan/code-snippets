@@ -150,9 +150,10 @@ long SwapBits(long x, int i, int j) {
 /// e.g. 12 has 4 min bits
 /// Index: [0, N - 1]
 /// Note: N has to be even here.
-long ReverseBits(long x, int N) {
-    for (int i = 0; i <= (N / 2) - 1; ++i) {
-        x = SwapBits(x, i, (N - 1) - i);
+long ReverseBits(long x) {
+    short min_bits = ceil(log(x + 1) / log(2));
+    for (int i = 0; i <= (min_bits / 2) - 1; ++i) {
+        x = SwapBits(x, i, (min_bits - 1) - i);
     }
     return x;
 }
@@ -309,7 +310,7 @@ int main() {
     cout << CountBits(5) << endl;
     cout << Parity(7) << endl;
     cout << SwapBits(12, 3, 1) << endl;
-    cout << ReverseBits(12, 4) << endl;
+    cout << ReverseBits(12) << endl;
     cout << Reverse(73569) << endl;
     cout << AsciiValue('B') << endl;
     cout << CharToInt('7') << endl;
