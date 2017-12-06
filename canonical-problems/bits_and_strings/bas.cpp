@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <iostream>
 #include <string>
@@ -303,9 +304,63 @@ int MyStringToInt(const string& s) {
     return is_neg ? -1 * num : num;
 }
 
+/// Mapping of numbers based on input char
+/// Helper for ConvertBase
+/// ['1', '2', ... , '9'] maps to [1, 2, ..., 9]
+/// ['A', 'B', 'C', 'D', 'E', 'F'] maps to:
+/// [10 ,  11,  12,  13,  14,  15]
+/// Num can be in a non 10 base
+int MapCharToNum(char c) {
+    if (isdigit(c))
+        return CharToInt(c);
+    else
+        return int(c) - 'A' + 10;
+}
+
+/// opposite mapping of
+/// MapCharToNum
+char MapNumToChar(int x) {
+    if (x >= 1 && x <= 9)
+        return IntToChar(x);
+    else if (x >= 10 && x <= 15)
+        return char(x - 10 + int('A'));
+    else
+        assert(false); // should not reach here
+}
+
+/// ConvertBase("615", 7, 13) = "1A7"
+/// b1 >= 2 and b2 <= 16
+/// if x in base b is denoted by: (x)_b, then:
+/// (615)_7 = (306)_10 = (1A7)_13
+/// Note:
+/// Our approach is to convert number from b1 -> base10
+/// and then base10 -> b2
+/// To convert from base b to base 10,
+/// we use the typical technique:
+/// (XYZ)_b = ((X * b ^ 2) + (Y * b ^ 1) + (Z * b ^ 0))_10
+/// An equivalent more efficient way to implement this:
+/// res = 0
+/// res = (res * b) + s[i]
+/// where s[i] = number representation of input string at i
+/// and b = base from which we convert to base 10
 string ConvertBase(const string& num_as_string, int b1,
                    int b2) {
-    return "";
+    if (num_as_string.empty())
+        return "";
+    int num_base10 = 0;
+    // step 1: convert from b1 -> base10
+    for (int i = 0; i < num_as_string.size(); ++i) {
+        num_base10 = (num_base10 * b1) +
+                     MapCharToNum(num_as_string[i]);
+    }
+    // step 2: convert from base10 -> b2
+    string num_base_b2 = "";
+    while (num_base10) {
+        num_base_b2 += MapNumToChar(num_base10 % b2);
+        num_base10 /= b2;
+    }
+    reverse(num_base_b2.begin(), num_base_b2.end());
+    return num_base_b2;
 }
 
 int main() {
@@ -321,5 +376,6 @@ int main() {
     cout << MyIntToString(45) << endl;
     cout << StringToInt("12") << endl;
     cout << MyStringToInt("12") << endl;
+    cout << ConvertBase("615", 7, 13) << endl;
     return 0;
 }
