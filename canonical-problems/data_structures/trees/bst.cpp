@@ -198,31 +198,13 @@ void print(const shared_ptr<Node> root) {
 }
 
 namespace problems {
-    struct Indices {
-        int root_idx;
-        int left_subtree_start;
-        int left_subtree_end;
-        int right_subtree_start;
-        int right_subtree_end;
-    };
-    Indices get_indices(const vector<int>& preorder,
-                        const int start, const int end) {
-        Indices indices;
-        indices.root_idx = start;
-        indices.left_subtree_start = indices.root_idx + 1;
-        int right_start = -1;
+    int get_transition_idx(const vector<int>& preorder,
+                           const int start, const int end) {
         for (int i = start + 1; i <= end; ++i) {
-            if (preorder[i] > preorder[start]) {
-                right_start = i;
-                break;
-            }
+            if (preorder[i] > preorder[start])
+                return i;
         }
-        indices.left_subtree_end =
-            right_start != -1 ? right_start - 1 : end;
-        indices.right_subtree_start = right_start;
-        indices.right_subtree_end =
-            right_start != -1 ? end : -1;
-        return indices;
+        return -1;
     }
     shared_ptr<Node>
     reconstruct_bst_helper(const vector<int>& preorder,
@@ -231,16 +213,12 @@ namespace problems {
             start > end)
             return nullptr;
         auto root = make_shared<Node>(preorder[start]);
-	cout << "allocated\n";
-        auto indices = get_indices(preorder, start, end);
-        if (indices.left_subtree_start > start)
-            root->left = reconstruct_bst_helper(
-                preorder, indices.left_subtree_start,
-                indices.left_subtree_end);
-        if (indices.right_subtree_start > start)
-            root->right = reconstruct_bst_helper(
-                preorder, indices.right_subtree_start,
-                indices.right_subtree_end);
+        const int transition_idx =
+            get_transition_idx(preorder, start, end);
+        root->left = reconstruct_bst_helper(
+            preorder, start + 1, transition_idx - 1);
+        root->right = reconstruct_bst_helper(
+            preorder, transition_idx, end);
         return root;
     }
     shared_ptr<Node>
@@ -248,7 +226,7 @@ namespace problems {
         if (preorder.empty())
             return nullptr;
         return reconstruct_bst_helper(preorder, 0,
-                                      preorder.size());
+                                      preorder.size() - 1);
     }
 }
 
@@ -261,6 +239,7 @@ int main() {
     // Next larger to 15: 17
     // Prev smaller to 15: 14
     // 2 2 5 5 7 14 14 15 15 15 15 17 27 27 35 35
+    // preorder sequence: 43 23 27 29 31 41 47 53
 
     BinarySearchTree bst;
     bst.insert(5);
