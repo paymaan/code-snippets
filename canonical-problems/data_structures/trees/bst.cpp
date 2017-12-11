@@ -187,6 +187,71 @@ void print(const vector<int>& list) {
     cout << "\n";
 }
 
+/// prints preorder sequence of tree rooted
+/// at given root.
+void print(const shared_ptr<Node> root) {
+    if (!root)
+        return;
+    cout << root->key << " ";
+    print(root->left);
+    print(root->right);
+}
+
+namespace problems {
+    struct Indices {
+        int root_idx;
+        int left_subtree_start;
+        int left_subtree_end;
+        int right_subtree_start;
+        int right_subtree_end;
+    };
+    Indices get_indices(const vector<int>& preorder,
+                        const int start, const int end) {
+        Indices indices;
+        indices.root_idx = start;
+        indices.left_subtree_start = indices.root_idx + 1;
+        int right_start = -1;
+        for (int i = start + 1; i <= end; ++i) {
+            if (preorder[i] > preorder[start]) {
+                right_start = i;
+                break;
+            }
+        }
+        indices.left_subtree_end =
+            right_start != -1 ? right_start - 1 : end;
+        indices.right_subtree_start = right_start;
+        indices.right_subtree_end =
+            right_start != -1 ? end : -1;
+        return indices;
+    }
+    shared_ptr<Node>
+    reconstruct_bst_helper(const vector<int>& preorder,
+                           const int start, const int end) {
+        if (start < 0 || start > preorder.size() - 1 ||
+            start > end)
+            return nullptr;
+        auto root = make_shared<Node>(preorder[start]);
+	cout << "allocated\n";
+        auto indices = get_indices(preorder, start, end);
+        if (indices.left_subtree_start > start)
+            root->left = reconstruct_bst_helper(
+                preorder, indices.left_subtree_start,
+                indices.left_subtree_end);
+        if (indices.right_subtree_start > start)
+            root->right = reconstruct_bst_helper(
+                preorder, indices.right_subtree_start,
+                indices.right_subtree_end);
+        return root;
+    }
+    shared_ptr<Node>
+    reconstruct_bst(const vector<int>& preorder) {
+        if (preorder.empty())
+            return nullptr;
+        return reconstruct_bst_helper(preorder, 0,
+                                      preorder.size());
+    }
+}
+
 int main() {
     // Output:
     // height: 6
@@ -234,6 +299,15 @@ int main() {
 
     const auto sorted_list = bst.sorted_list();
     print(sorted_list);
+
+    // misc problems
+    using namespace problems;
+    const vector<int> preorder = {43, 23, 27, 29,
+                                  31, 41, 47, 53};
+    cout << "preorder sequence: ";
+    if (const auto n = reconstruct_bst(preorder))
+        print(n);
+    cout << endl;
 
     return 0;
 }
