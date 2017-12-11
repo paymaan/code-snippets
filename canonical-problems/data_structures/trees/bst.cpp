@@ -202,9 +202,9 @@ namespace problems {
                            const int start, const int end) {
         for (int i = start + 1; i <= end; ++i) {
             if (preorder[i] > preorder[start])
-                return i;
+                return i - 1;
         }
-        return -1;
+        return end;
     }
     shared_ptr<Node>
     reconstruct_bst_helper(const vector<int>& preorder,
@@ -212,13 +212,18 @@ namespace problems {
         if (start < 0 || start > preorder.size() - 1 ||
             start > end)
             return nullptr;
+
         auto root = make_shared<Node>(preorder[start]);
+        if (start == end)
+            return root;
+
         const int transition_idx =
             get_transition_idx(preorder, start, end);
         root->left = reconstruct_bst_helper(
-            preorder, start + 1, transition_idx - 1);
+            preorder, start + 1, transition_idx);
         root->right = reconstruct_bst_helper(
-            preorder, transition_idx, end);
+            preorder, transition_idx + 1, end);
+
         return root;
     }
     shared_ptr<Node>
