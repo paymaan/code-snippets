@@ -49,8 +49,7 @@ using NeighborsSet =
 // graph O(1) time.
 // Why hash set? Can lookup a given node's child in
 // O(1) time.
-using AdjacencyList =
-    unordered_set<shared_ptr<Node>>;
+using AdjacencyList = unordered_set<shared_ptr<Node>>;
 
 /// Node for graph.
 /// Why string typed key? Can templatize easily.
@@ -105,28 +104,27 @@ class Graph {
     void add_node(shared_ptr<Node> node) {
         assert(node);
         if (adj_list.find(node) != adj_list.end())
-            assert(false);   // already exists
+            assert(false); // already exists
         adj_list.insert(node);
     }
 
     void add_edge(shared_ptr<Node> source,
-                  shared_ptr<Node> dest,
-		  int weight = 1) {
-      assert(source && dest);
-      if (adj_list.find(source) == adj_list.end())
-	add_node(source);
-      if (adj_list.find(source) == adj_list.end())
-	add_node(dest);
-      source->add_neighbor(dest, weight);
+                  shared_ptr<Node> dest, int weight = 1) {
+        assert(source && dest);
+        if (adj_list.find(source) == adj_list.end())
+            add_node(source);
+        if (adj_list.find(source) == adj_list.end())
+            add_node(dest);
+        source->add_neighbor(dest, weight);
     }
 
-  void add_undirected_edge(shared_ptr<Node> source,
-			   shared_ptr<Node> dest,
-			   int weight = 1) {
-    assert(source && dest);
-    add_edge(source, dest);
-    add_edge(dest, source);    
-  }
+    void add_undirected_edge(shared_ptr<Node> source,
+                             shared_ptr<Node> dest,
+                             int weight = 1) {
+        assert(source && dest);
+        add_edge(source, dest);
+        add_edge(dest, source);
+    }
 
   private:
     AdjacencyList adj_list;
