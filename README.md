@@ -1,7 +1,7 @@
 # code-snippets
 A collection of my code snippets
 
-The motivations for maintaining these are:
+The motivation for maintaining these are:
 * Have a collection of small toy examples that I can reuse in other projects before I forget them
 * Never forget those *tricks* in *that* language
 * Solve basic puzzles/problems and improve them over time when I find a better solution
