@@ -172,7 +172,7 @@ int main() {
     g.add_edge(barcelona, mancity);
     
     if (g.is_reachable(chelsea, manutd))
-        cout << "Chelsea beated Manchester United.\n";
+        cout << "Chelsea defeated Manchester United.\n";
     
     return 0;
 }
