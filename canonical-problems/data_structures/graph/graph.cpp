@@ -2,6 +2,7 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <stack>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
@@ -128,6 +129,15 @@ class Graph {
     //
     /// Graph Algorithms
     //
+    /// Basic DFS - O(V + E). E = # edges
+    /// Not O(V) where V = # nodes/vertices because one
+    /// node can have multiple incoming nodes as opposed
+    /// to 1 in for example binary trees.
+    /// Space is O(V) because of implicit recursive stack.
+    /// Note: DFS has to start from *some* node. For trees
+    /// it's the root but for graphs, it's more generic
+    /// since also because graphs can have unconnected
+    /// components.
     void dfs(shared_ptr<Node> node) const {
         cout << node->key << " ";
         for (const auto& neighbor : node->neighbors)
@@ -136,6 +146,10 @@ class Graph {
 
     /// Is node2 reachable from node1?
     /// In other words does path node1->node2 exist?
+    /// O(E) because of DFS. Although can be made more
+    /// efficient by caching what nodes are visited. Athough
+    /// worst case still O(E). Space is O(V) because of
+    /// implicit recursive stack.
     bool is_reachable(shared_ptr<Node> node1,
                       shared_ptr<Node> node2) const {
         // Can do a dfs or bfs and see if we get node2
@@ -148,6 +162,17 @@ class Graph {
         }
         return false;
     }
+
+    void topological_sort() const {
+        unordered_set<shared_ptr<Node>> visited;
+        stack<shared_ptr<Node>> topo_sort;
+        topological_sort_helper(/*adj_list, */ visited,
+                                topo_sort);
+    }
+
+    void topological_sort_helper(
+        unordered_set<shared_ptr<Node>>& visited,
+        stack<shared_ptr<Node>>& topo_sort) const {}
 
   private:
     AdjacencyList adj_list;
@@ -170,9 +195,9 @@ int main() {
     g.add_edge(barcelona, realmadrid);
     g.add_edge(mancity, manutd);
     g.add_edge(barcelona, mancity);
-    
+
     if (g.is_reachable(chelsea, manutd))
         cout << "Chelsea defeated Manchester United.\n";
-    
+
     return 0;
 }
