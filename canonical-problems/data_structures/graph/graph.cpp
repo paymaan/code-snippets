@@ -182,6 +182,8 @@ class Graph {
     /// Note: We must explore a given node in a DFS manner
     /// because doing it that way will take care of node
     /// dependencies (directions) inherently.
+    /// Time: O(E + V), Space: O(V)
+    /// Same as DFS
     void topological_sort() const {
         unordered_set<shared_ptr<Node>> visited;
         // explored at the end will be filled
@@ -250,6 +252,6 @@ int main() {
 
     cout << "\nTopological sort of teams:\n";
     g.topological_sort();
-    
+
     return 0;
 }
