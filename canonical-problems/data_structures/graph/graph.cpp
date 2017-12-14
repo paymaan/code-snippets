@@ -163,16 +163,64 @@ class Graph {
         return false;
     }
 
+    /// One application: dependency analysis (e.g. build
+    /// systems)
+    /// Stack and hashset implementation
+    /// Idea: Pick any node, and rescursively explore
+    /// it fully. While doing that cache visited nodes.
+    /// Once node fully explored, add it to explored
+    /// stack. Then pick another node and explore it fully.
+    /// In the process, don't revisit. This works because
+    /// once a given area of graph is explored, we have
+    /// covered
+    /// *all* downstream nodes starting from the initial
+    /// node.
+    /// After that the only unvisited nodes are the ones
+    /// upstream which we visit and explore again.
+    /// Note: there can be multiple valid topological sorted
+    /// sequences for a given graph.
+    /// Note: We must explore a given node in a DFS manner
+    /// because doing it that way will take care of node
+    /// dependencies (directions) inherently.
     void topological_sort() const {
         unordered_set<shared_ptr<Node>> visited;
-        stack<shared_ptr<Node>> topo_sort;
-        topological_sort_helper(/*adj_list, */ visited,
-                                topo_sort);
+        // explored at the end will be filled
+        // with nodes in topologically sorted
+        // order.
+        stack<shared_ptr<Node>> explored;
+        // Pick any node at random ===
+        // traverse hashset.
+        // Note: This won't be deterministic across builds
+        // but will still give a valid topo sort.
+        for (const auto node : adj_list) {
+            topological_sort_helper(node, visited,
+                                    explored);
+        }
+        // print populated stack
+        while (!explored.empty()) {
+            cout << explored.top()->key << " ";
+            explored.pop();
+        }
+        cout << endl;
     }
 
     void topological_sort_helper(
+        const shared_ptr<Node> node,
         unordered_set<shared_ptr<Node>>& visited,
-        stack<shared_ptr<Node>>& topo_sort) const {}
+        stack<shared_ptr<Node>>& explored) const {
+        // if visited, return early
+        if (visited.find(node) != visited.end())
+            return;
+        // else, make node visited
+        visited.insert(node);
+        // now start exploring
+        for (const auto neighbor : node->neighbors) {
+            topological_sort_helper(neighbor.first, visited,
+                                    explored);
+        }
+        // add to stack once done exploring this node
+        explored.push(node);
+    }
 
   private:
     AdjacencyList adj_list;
@@ -189,6 +237,7 @@ int main() {
     auto mancity = make_shared<Node>("ManCity");
     auto liverpool = make_shared<Node>("Liverpool");
     auto juventus = make_shared<Node>("Juventus");
+    g.add_node(juventus);
     g.add_edge(arsenal, liverpool);
     g.add_edge(tottenham, arsenal);
     g.add_edge(chelsea, barcelona);
@@ -199,5 +248,8 @@ int main() {
     if (g.is_reachable(chelsea, manutd))
         cout << "Chelsea defeated Manchester United.\n";
 
+    cout << "\nTopological sort of teams:\n";
+    g.topological_sort();
+    
     return 0;
 }
