@@ -55,8 +55,8 @@ using AdjacencyList = unordered_set<shared_ptr<Node>>;
 /// Why string typed key? Can templatize easily.
 class Node {
   public:
-    Node()
-        : key()
+    Node(string given_key)
+        : key(given_key)
         , neighbors() {}
 
     bool operator==(const Node& other) {
@@ -92,7 +92,6 @@ class Node {
             neighbors.erase(pair);
     }
 
-  private:
     NeighborsSet neighbors;
 };
 
@@ -126,12 +125,54 @@ class Graph {
         add_edge(dest, source);
     }
 
+    //
+    /// Graph Algorithms
+    //
+    void dfs(shared_ptr<Node> node) const {
+        cout << node->key << " ";
+        for (const auto& neighbor : node->neighbors)
+            dfs(neighbor.first);
+    }
+
+    /// Is node2 reachable from node1?
+    /// In other words does path node1->node2 exist?
+    bool is_reachable(shared_ptr<Node> node1,
+                      shared_ptr<Node> node2) const {
+        // Can do a dfs or bfs and see if we get node2
+        // starting
+        // from node1. Will do dfs for now.
+        for (const auto& neighbor : node1->neighbors) {
+            if (neighbor.first == node2)
+                return true;
+            return is_reachable(neighbor.first, node2);
+        }
+        return false;
+    }
+
   private:
     AdjacencyList adj_list;
 };
 
 int main() {
     Graph g;
-    cout << "hello" << endl;
+    auto arsenal = make_shared<Node>("Arsenal");
+    auto chelsea = make_shared<Node>("Chelsea");
+    auto barcelona = make_shared<Node>("Barcelona");
+    auto realmadrid = make_shared<Node>("RealMadrid");
+    auto tottenham = make_shared<Node>("Tottenham");
+    auto manutd = make_shared<Node>("ManUtd");
+    auto mancity = make_shared<Node>("ManCity");
+    auto liverpool = make_shared<Node>("Liverpool");
+    auto juventus = make_shared<Node>("Juventus");
+    g.add_edge(arsenal, liverpool);
+    g.add_edge(tottenham, arsenal);
+    g.add_edge(chelsea, barcelona);
+    g.add_edge(barcelona, realmadrid);
+    g.add_edge(mancity, manutd);
+    g.add_edge(barcelona, mancity);
+    
+    if (g.is_reachable(chelsea, manutd))
+        cout << "Chelsea beated Manchester United.\n";
+    
     return 0;
 }
