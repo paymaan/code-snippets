@@ -229,6 +229,10 @@ class Graph {
 
     /// Graph starting at node can contain cycles
     /// It can be either directed or undirected
+    /// Time: O(V + E)
+    /// Space: O(V)
+    /// Same as DFS
+    /// Note: Using graph with adjacency list
     void bfs(shared_ptr<Node> node) const {
         if (!node)
             return;
