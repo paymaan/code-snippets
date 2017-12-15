@@ -184,6 +184,8 @@ class Graph {
     /// dependencies (directions) inherently.
     /// Time: O(E + V), Space: O(V)
     /// Same as DFS
+    /// Note: Graph must be a DAG otherwise topological
+    /// sort isn't defined.
     void topological_sort() const {
         unordered_set<shared_ptr<Node>> visited;
         // explored at the end will be filled
@@ -224,6 +226,9 @@ class Graph {
         explored.push(node);
     }
 
+    void bfs(shared_ptr<Node> node) const {
+    }
+
   private:
     AdjacencyList adj_list;
 };
@@ -246,6 +251,14 @@ int main() {
     g.add_edge(barcelona, realmadrid);
     g.add_edge(mancity, manutd);
     g.add_edge(barcelona, mancity);
+
+    cout << "Dfs starting from chelsea node is:\n";
+    g.dfs(chelsea);
+    cout << endl << endl;
+
+    cout << "Bfs starting from chelsea node is:\n";
+    g.bfs(chelsea);
+    cout << endl;
 
     if (g.is_reachable(chelsea, manutd))
         cout << "Chelsea defeated Manchester United.\n";
