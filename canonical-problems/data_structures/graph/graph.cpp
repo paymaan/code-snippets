@@ -186,7 +186,8 @@ class Graph {
     /// Time: O(E + V), Space: O(V)
     /// Same as DFS
     /// Note: Graph must be a DAG otherwise topological
-    /// sort isn't defined.
+    /// sort isn't defined i.e. can't have cycles or be
+    /// undirected.
     void topological_sort() const {
         unordered_set<shared_ptr<Node>> visited;
         // explored at the end will be filled
@@ -227,6 +228,35 @@ class Graph {
         explored.push(node);
     }
 
+    /// Cycle detection algorithm in an undirected graph
+    /// Multiple ways:
+    /// 1) disjoint sets
+    /// 2) dfs
+    /// 3) topological sort
+    /// Will use dfs here
+    /// Note: This algorithm has to be provided a starting
+    /// node
+    /// It tells if a cycle exists if we traverse in any
+    /// order starting from the given node.
+    bool cycle_exists(shared_ptr<Node> node) const {
+        unordered_set<shared_ptr<Node>> visited;
+        return cycle_exists_helper(node, visited);
+    }
+
+    bool cycle_exists_helper(
+        shared_ptr<Node> node,
+        unordered_set<shared_ptr<Node>> visited) const {
+        if (visited.find(node) != visited.end())
+            return true;
+        visited.insert(node);
+        for (const auto neighbor : node->neighbors) {
+            if (cycle_exists_helper(neighbor.first,
+                                    visited))
+                return true;
+        }
+        return false;
+    }
+
     /// Graph starting at node can contain cycles
     /// It can be either directed or undirected
     /// Time: O(V + E)
@@ -255,12 +285,14 @@ class Graph {
                      q.front()->neighbors) {
                     q.push(neighbor.first);
                 }
-                // now pop the node; this will be part of
-                // bfs
-                // sequence; can store in another container
-                // or just cout for now.
+                // now populate output sequencex; this will
+                // be part of bfs sequence; can store in
+                // another container or just cout for now.
                 cout << q.front()->key << " ";
             }
+            // finally, pop from queue since we have
+            // explored this and moved to output
+            // if needed.
             q.pop();
         }
         cout << endl;
@@ -271,18 +303,25 @@ class Graph {
 };
 
 int main() {
-    // Main Output:
-    // Dfs starting from chelsea node is:
-    // Chelsea Barcelona ManCity ManUtd RealMadrid
+    /// Main Output:
 
-    // Bfs starting from chelsea node is:
-    // Chelsea Barcelona ManCity RealMadrid ManUtd
+    /// Without cycles:
+    /// Dfs starting from chelsea node is:
+    /// Chelsea Barcelona ManCity ManUtd RealMadrid
 
-    // Chelsea defeated Manchester United.
+    /// Bfs starting from chelsea node is:
+    /// Chelsea Barcelona ManCity RealMadrid ManUtd
 
-    // Topological sort of teams:
-    // Chelsea Tottenham Arsenal Liverpool Juventus
-    // Barcelona RealMadrid ManCity ManUtd
+    /// Chelsea defeated Manchester United.
+
+    /// Topological sort of teams:
+    /// Chelsea Tottenham Arsenal Liverpool Juventus
+    /// Barcelona RealMadrid ManCity ManUtd
+
+    /// With cycles:
+    /// Cucle exists in graph.
+    /// Note: g.add_edge(liverpool, chelsea) introduces the
+    /// cycle
 
     Graph g;
     auto arsenal = make_shared<Node>("Arsenal");
@@ -301,20 +340,27 @@ int main() {
     g.add_edge(barcelona, realmadrid);
     g.add_edge(mancity, manutd);
     g.add_edge(barcelona, mancity);
+    g.add_edge(realmadrid, tottenham);
+    g.add_edge(liverpool, chelsea);
+    g.add_edge(chelsea, juventus);
 
-    cout << "Dfs starting from chelsea node is:\n";
-    g.dfs(chelsea);
-    cout << endl << endl;
+    if (g.cycle_exists(barcelona)) {
+        cout << "Cycle exists in graph" << endl;
+    } else {
+        cout << "Dfs starting from chelsea node is:\n";
+        g.dfs(chelsea);
+        cout << endl << endl;
 
-    cout << "Bfs starting from chelsea node is:\n";
-    g.bfs(chelsea);
-    cout << endl;
+        cout << "Bfs starting from chelsea node is:\n";
+        g.bfs(chelsea);
+        cout << endl;
 
-    if (g.is_reachable(chelsea, manutd))
-        cout << "Chelsea defeated Manchester United.\n";
+        if (g.is_reachable(chelsea, manutd))
+            cout << "Chelsea defeated Manchester United.\n";
 
-    cout << "\nTopological sort of teams:\n";
-    g.topological_sort();
-
+        cout << "\nTopological sort of teams:\n";
+        if (!g.cycle_exists(chelsea))
+            g.topological_sort();
+    }
     return 0;
 }
