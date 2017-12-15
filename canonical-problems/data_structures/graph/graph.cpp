@@ -2,6 +2,7 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <queue>
 #include <stack>
 #include <unordered_map>
 #include <unordered_set>
@@ -226,7 +227,39 @@ class Graph {
         explored.push(node);
     }
 
+    /// Graph starting at node can contain cycles
+    /// It can be either directed or undirected
     void bfs(shared_ptr<Node> node) const {
+        if (!node)
+            return;
+        // to preserve level order, use a queue
+        queue<shared_ptr<Node>> q;
+        // to take care of cycles, use visited set
+        unordered_set<shared_ptr<Node>> visited;
+        // push node in the queue to start with
+        q.push(node);
+        while (!q.empty()) {
+            // push neighbors to queue if node not visited
+            if (visited.find(q.front()) == visited.end()) {
+                // mark visited
+                visited.insert(q.front());
+                // explore node but just for 1 level i.e. no
+                // recursion here and push the
+                // children/neighbor
+                // of this node to the end of queue
+                for (const auto neighbor :
+                     q.front()->neighbors) {
+                    q.push(neighbor.first);
+                }
+                // now pop the node; this will be part of
+                // bfs
+                // sequence; can store in another container
+                // or just cout for now.
+                cout << q.front()->key << " ";
+            }
+            q.pop();
+        }
+        cout << endl;
     }
 
   private:
@@ -234,6 +267,19 @@ class Graph {
 };
 
 int main() {
+    // Main Output:
+    // Dfs starting from chelsea node is:
+    // Chelsea Barcelona ManCity ManUtd RealMadrid
+
+    // Bfs starting from chelsea node is:
+    // Chelsea Barcelona ManCity RealMadrid ManUtd
+
+    // Chelsea defeated Manchester United.
+
+    // Topological sort of teams:
+    // Chelsea Tottenham Arsenal Liverpool Juventus
+    // Barcelona RealMadrid ManCity ManUtd
+
     Graph g;
     auto arsenal = make_shared<Node>("Arsenal");
     auto chelsea = make_shared<Node>("Chelsea");
