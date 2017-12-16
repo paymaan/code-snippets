@@ -310,7 +310,7 @@ class Graph {
     /// vertices in the graph. Note distance(s,d) ===
     /// weight(s,d).
     /// We'll use a min heap as our priority queue
-    /// Will use djikstra's algorithm
+    /// Will use dijkstra's algorithm
     /// Cycles allowed? Yes, as long as non negative edge
     /// weights.
     /// Time: O( V * T_extract_min + E * T_decrease_key )
