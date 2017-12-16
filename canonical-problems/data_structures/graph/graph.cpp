@@ -440,6 +440,8 @@ void test1() {
 }
 
 void test2() {
+    /// Main Output:
+    /// Shortest path from a -> d has weight: 9
     Graph g;
     auto a = make_shared<Node>("a");
     auto b = make_shared<Node>("b");
