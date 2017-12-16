@@ -328,15 +328,18 @@ class Graph {
     /// Note: T_decrease_key is the heap operation where we
     /// have to re-adjust the internal heap structure to
     /// satisfy invariant.
-    void shortest_path(shared_ptr<Node> source,
-                       unordered_map<shared_ptr<Node>, int>&
-                           min_weights) const {
+    void shortest_path(
+        shared_ptr<Node> source,
+        unordered_map<shared_ptr<Node>, int>& min_weights,
+        unordered_map<shared_ptr<Node>, string>& min_paths)
+        const {
         /// 1) INITIALIZE
         // Initialize min_weights and map and a priority
         // queue (min heap)
         for (const auto v : adj_list) {
             // assign delta(source, v) to infinity
             min_weights[v] = numeric_limits<int>::max();
+            min_paths[v] += source->key;
         }
         // but we know delta(source, source) is 0
         // since all weight edges are non zero
@@ -364,9 +367,17 @@ class Graph {
                     min_weights[neighbor.first] =
                         min_weights[min_vertex] +
                         neighbor.second;
+                    min_paths[neighbor.first] +=
+                        min_vertex->key;
                 }
             }
             pq.pop();
+        }
+        // just for min_paths, we have to add destintion
+        // at end
+        for (const auto v : adj_list) {
+            if (v != source)
+                min_paths[v] += v->key;
         }
     }
 
@@ -458,10 +469,15 @@ void test2() {
     g.add_edge(d, e, 7);
     g.add_edge(e, d, 9);
 
-    unordered_map<shared_ptr<Node>, int> min_distances;
-    g.shortest_path(a, min_distances);
+    unordered_map<shared_ptr<Node>, int> min_path_distances;
+    unordered_map<shared_ptr<Node>, string>
+        min_path_strings;
+    g.shortest_path(a, min_path_distances,
+                    min_path_strings);
     cout << "Shortest path from a -> d has weight: "
-         << min_distances[d] << endl;
+         << min_path_strings[d] << endl;
+    cout << "Shortest path from a -> d has weight: "
+         << min_path_distances[d] << endl;
 }
 
 int main() {
