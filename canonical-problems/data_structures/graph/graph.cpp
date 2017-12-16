@@ -76,6 +76,7 @@ class Node {
 
     // Add neighbor if there isn't one already.
     // Else asserts (neighbor already exists)
+    // Time: O(1), Space: O(1)
     void add_neighbor(shared_ptr<Node> node,
                       int weight = 1) {
         assert(node);
@@ -87,6 +88,7 @@ class Node {
 
     // Removes neighbor if there exists one.
     // Else, silently returns.
+    // Time: O(1), Space: O(1)  
     void remove_neighbor(shared_ptr<Node> node) {
         assert(node);
         auto pair = make_pair(node, -1);
@@ -102,6 +104,7 @@ class Graph {
     Graph()
         : adj_list() {}
 
+      // Time: O(1), Space: O(1)
     void add_node(shared_ptr<Node> node) {
         assert(node);
         if (adj_list.find(node) != adj_list.end())
@@ -109,6 +112,7 @@ class Graph {
         adj_list.insert(node);
     }
 
+      // Time: O(1), Space: O(1)
     void add_edge(shared_ptr<Node> source,
                   shared_ptr<Node> dest, int weight = 1) {
         assert(source && dest);
@@ -118,7 +122,8 @@ class Graph {
             add_node(dest);
         source->add_neighbor(dest, weight);
     }
-
+  
+    // Time: O(1), Space: O(1)
     void add_undirected_edge(shared_ptr<Node> source,
                              shared_ptr<Node> dest,
                              int weight = 1) {
