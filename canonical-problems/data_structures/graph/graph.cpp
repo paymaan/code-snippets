@@ -1,6 +1,7 @@
 #include <cassert>
 #include <functional>
 #include <iostream>
+#include <limits>
 #include <memory>
 #include <queue>
 #include <stack>
@@ -88,7 +89,7 @@ class Node {
 
     // Removes neighbor if there exists one.
     // Else, silently returns.
-    // Time: O(1), Space: O(1)  
+    // Time: O(1), Space: O(1)
     void remove_neighbor(shared_ptr<Node> node) {
         assert(node);
         auto pair = make_pair(node, -1);
@@ -104,7 +105,7 @@ class Graph {
     Graph()
         : adj_list() {}
 
-      // Time: O(1), Space: O(1)
+    // Time: O(1), Space: O(1)
     void add_node(shared_ptr<Node> node) {
         assert(node);
         if (adj_list.find(node) != adj_list.end())
@@ -112,7 +113,8 @@ class Graph {
         adj_list.insert(node);
     }
 
-      // Time: O(1), Space: O(1)
+    // Time: O(1), Space: O(1)
+    // add directed edge
     void add_edge(shared_ptr<Node> source,
                   shared_ptr<Node> dest, int weight = 1) {
         assert(source && dest);
@@ -122,7 +124,7 @@ class Graph {
             add_node(dest);
         source->add_neighbor(dest, weight);
     }
-  
+
     // Time: O(1), Space: O(1)
     void add_undirected_edge(shared_ptr<Node> source,
                              shared_ptr<Node> dest,
@@ -303,11 +305,79 @@ class Graph {
         cout << endl;
     }
 
+    /// Directed graph with non negative edge weights
+    /// Returns the min distance from source to all other
+    /// vertices in the graph. Note distance(s,d) ===
+    /// weight(s,d).
+    /// We'll use a min heap as our priority queue
+    /// Will use djikstra's algorithm
+    /// Cycles allowed? Yes, as long as non negative edge
+    /// weights.
+    /// Time: O( V * T_extract_min + E * T_decrease_key )
+    /// For min heap priority queue:
+    ///   T_extract_min = O(log V)
+    ///   T_decrease_key = O(log V)
+    /// This is because it's a binary heap.
+    /// So total time: O( log V * (V + E) )
+    /// If E >> V, then: O( E * log V )
+    /// Can use fib heap which has T_decrease_key = O(1)
+    /// Total then would be:
+    /// O( E + log V )
+    /// Space: O(E) for min_weights map and priority queue
+    /// Note: This is SINGLE source shortest path algorithm
+    /// Note: T_decrease_key is the heap operation where we
+    /// have to re-adjust the internal heap structure to
+    /// satisfy invariant.
+    void shortest_path(shared_ptr<Node> source,
+                       unordered_map<shared_ptr<Node>, int>&
+                           min_weights) const {
+        /// 1) INITIALIZE
+        // Initialize min_weights and map and a priority
+        // queue (min heap)
+        for (const auto v : adj_list) {
+            // assign delta(source, v) to infinity
+            min_weights[v] = numeric_limits<int>::max();
+        }
+        // but we know delta(source, source) is 0
+        // since all weight edges are non zero
+        min_weights[source] = 0;
+        // now initialize the priority queue
+        auto cmp = [&min_weights](shared_ptr<Node> v2,
+                                  shared_ptr<Node> v1) {
+            return min_weights[v1] < min_weights[v2];
+        };
+        priority_queue<shared_ptr<Node>,
+                       vector<shared_ptr<Node>>,
+                       decltype(cmp)>
+            pq(cmp);
+        for (const auto& p : min_weights)
+            pq.push(p.first);
+
+        /// 2) ALGORITHM
+        while (!pq.empty()) {
+            auto min_vertex = pq.top();
+            for (const auto& neighbor :
+                 min_vertex->neighbors) {
+                if (min_weights[neighbor.first] >
+                    min_weights[min_vertex] +
+                        neighbor.second) {
+                    min_weights[neighbor.first] =
+                        min_weights[min_vertex] +
+                        neighbor.second;
+                }
+            }
+            pq.pop();
+        }
+    }
+
   private:
+    /// really a set of all nodes for now
+    /// those nodes have a corresponding neighbor set
+    /// so it's kind of an adjacency list in OOP world
     AdjacencyList adj_list;
 };
 
-int main() {
+void test1() {
     /// Main Output:
 
     /// Without cycles:
@@ -367,5 +437,34 @@ int main() {
         if (!g.cycle_exists(chelsea))
             g.topological_sort();
     }
+}
+
+void test2() {
+    Graph g;
+    auto a = make_shared<Node>("a");
+    auto b = make_shared<Node>("b");
+    auto c = make_shared<Node>("c");
+    auto d = make_shared<Node>("d");
+    auto e = make_shared<Node>("e");
+    g.add_edge(a, b, 10);
+    g.add_edge(a, c, 3);
+    g.add_edge(b, c, 1);
+    g.add_edge(b, d, 2);
+    g.add_edge(c, b, 4);
+    g.add_edge(c, d, 8);
+    g.add_edge(c, e, 2);
+    g.add_edge(d, e, 7);
+    g.add_edge(e, d, 9);
+
+    unordered_map<shared_ptr<Node>, int> min_distances;
+    g.shortest_path(a, min_distances);
+    cout << "Shortest path from a -> d has weight: "
+         << min_distances[d] << endl;
+}
+
+int main() {
+    test1();
+    cout << endl;
+    test2();
     return 0;
 }
