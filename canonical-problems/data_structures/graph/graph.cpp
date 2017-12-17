@@ -363,8 +363,8 @@ class Graph {
     void shortest_path(
         shared_ptr<Node> source,
         unordered_map<shared_ptr<Node>, int>& min_weights,
-        unordered_map<shared_ptr<Node>, string>& min_paths)
-        const {
+        unordered_map<shared_ptr<Node>, shared_ptr<Node>>&
+            parents) const {
         /// 1) INITIALIZE
         // Initialize min_weights and map and a priority
         // queue (min heap)
@@ -375,11 +375,10 @@ class Graph {
         // but we know delta(source, source) is 0
         // since all weight edges are non zero
         min_weights[source] = 0;
-        min_paths[source] += source->key;
         // now initialize the priority queue
-        auto cmp = [&min_weights](shared_ptr<Node> v2,
-                                  shared_ptr<Node> v1) {
-            return min_weights[v1] < min_weights[v2];
+        auto cmp = [&min_weights](shared_ptr<Node> v1,
+                                  shared_ptr<Node> v2) {
+            return min_weights[v1] > min_weights[v2];
         };
         priority_queue<shared_ptr<Node>,
                        vector<shared_ptr<Node>>,
@@ -391,6 +390,7 @@ class Graph {
         /// 2) ALGORITHM
         while (!pq.empty()) {
             auto min_vertex = pq.top();
+            // relax min_vertex's neighbors
             for (const auto& neighbor :
                  min_vertex->neighbors) {
                 if (min_weights[neighbor.first] >
@@ -399,18 +399,28 @@ class Graph {
                     min_weights[neighbor.first] =
                         min_weights[min_vertex] +
                         neighbor.second;
-                    min_paths[neighbor.first] +=
-                        min_vertex->key;
+                    // have to trigger re-sort in pq
+                    // this is the implicity T_decrease_key
                 }
             }
             pq.pop();
         }
-        // just for min_paths, we have to add destination
-        // at end
-        for (const auto v : adj_list) {
-            if (v != source)
-                min_paths[v] += v->key;
+    }
+
+    string shortest_path_str(
+        unordered_map<shared_ptr<Node>, shared_ptr<Node>>&
+            parents,
+        shared_ptr<Node> source,
+        shared_ptr<Node> dest) const {
+        assert(source && dest);
+        string path = "";
+        shared_ptr<Node> dest_copy = dest;
+        while (dest_copy && dest_copy != source) {
+            path += dest_copy->key;
+            dest_copy = parents[dest_copy];
         }
+        reverse(path.begin(), path.end());
+        return source->key + path + dest->key;
     }
 
   private:
@@ -512,12 +522,12 @@ void test_shortest_path() {
     g.add_edge(e, d, 9);
 
     unordered_map<shared_ptr<Node>, int> min_path_distances;
-    unordered_map<shared_ptr<Node>, string>
-        min_path_strings;
-    g.shortest_path(a, min_path_distances,
-                    min_path_strings);
+    // needed only for path string calculation
+    unordered_map<shared_ptr<Node>, shared_ptr<Node>>
+        parents;
+    g.shortest_path(a, min_path_distances, parents);
     cout << "Shortest path from a -> d has path: "
-         << min_path_strings[d] << endl;
+         << g.shortest_path_str(parents, a, d) << endl;
     cout << "Shortest path from a -> d has weight: "
          << min_path_distances[d] << endl;
 }
