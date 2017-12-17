@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cassert>
 #include <functional>
 #include <iostream>
@@ -245,22 +246,53 @@ class Graph {
     /// node
     /// It tells if a cycle exists if we traverse in any
     /// order starting from the given node.
+    /// We utilize explicit recusrion stack to store nodes
+    /// in the recursion. For a given node, the recursion
+    /// set it will see will have all its ancestors
+    /// because of the way recursion dfs is set up.
+    /// Time: O(V + E)
+    /// Space: O(V)
     bool cycle_exists(shared_ptr<Node> node) const {
+        // visited set only grows
         unordered_set<shared_ptr<Node>> visited;
-        return cycle_exists_helper(node, visited);
+        // rec_stack grows and shrinks
+        unordered_map<shared_ptr<Node>, shared_ptr<Node>>
+            rec_stack;
+        string cycle_path;
+        if (cycle_exists_helper(node, nullptr, visited,
+                                rec_stack, cycle_path)) {
+            reverse(cycle_path.begin(), cycle_path.end());
+            cout << "Cyclic path is: " << cycle_path
+                 << endl;
+            return true;
+        }
+        return false;
     }
 
     bool cycle_exists_helper(
-        shared_ptr<Node> node,
-        unordered_set<shared_ptr<Node>> visited) const {
-        if (visited.find(node) != visited.end())
+        shared_ptr<Node> node, shared_ptr<Node> parent,
+        unordered_set<shared_ptr<Node>>& visited,
+        unordered_map<shared_ptr<Node>, shared_ptr<Node>>&
+            rec_stack,
+        string& cycle_path) const {
+        if (!node)
+            return false;
+        // cycle if in visited AND rec_stack set/map
+        // => back edge
+        if (visited.find(node) != visited.end() &&
+            rec_stack.find(node) != rec_stack.end())
             return true;
         visited.insert(node);
+        rec_stack[node] = parent;
         for (const auto neighbor : node->neighbors) {
-            if (cycle_exists_helper(neighbor.first,
-                                    visited))
+            if (cycle_exists_helper(neighbor.first, node,
+                                    visited, rec_stack,
+                                    cycle_path)) {
+                cycle_path += neighbor.first->key;
                 return true;
+            }
         }
+        rec_stack.erase(node);
         return false;
     }
 
@@ -388,10 +420,9 @@ class Graph {
     AdjacencyList adj_list;
 };
 
-void test1() {
+void test_basic() {
     /// Main Output:
 
-    /// Without cycles:
     /// Dfs starting from chelsea node is:
     /// Chelsea Barcelona ManCity ManUtd RealMadrid
 
@@ -403,11 +434,6 @@ void test1() {
     /// Topological sort of teams:
     /// Chelsea Tottenham Arsenal Liverpool Juventus
     /// Barcelona RealMadrid ManCity ManUtd
-
-    /// With cycles:
-    /// Cucle exists in graph.
-    /// Note: g.add_edge(liverpool, chelsea) introduces the
-    /// cycle
 
     Graph g;
     auto arsenal = make_shared<Node>("Arsenal");
@@ -427,30 +453,46 @@ void test1() {
     g.add_edge(mancity, manutd);
     g.add_edge(barcelona, mancity);
     g.add_edge(realmadrid, tottenham);
-    g.add_edge(liverpool, chelsea);
     g.add_edge(chelsea, juventus);
 
-    if (g.cycle_exists(barcelona)) {
-        cout << "Cycle exists in graph" << endl;
-    } else {
-        cout << "Dfs starting from chelsea node is:\n";
-        g.dfs(chelsea);
-        cout << endl << endl;
+    cout << "Dfs starting from chelsea node is:\n";
+    g.dfs(chelsea);
+    cout << endl << endl;
 
-        cout << "Bfs starting from chelsea node is:\n";
-        g.bfs(chelsea);
-        cout << endl;
+    cout << "Bfs starting from chelsea node is:\n";
+    g.bfs(chelsea);
+    cout << endl;
 
-        if (g.is_reachable(chelsea, manutd))
-            cout << "Chelsea defeated Manchester United.\n";
+    if (g.is_reachable(chelsea, manutd))
+        cout << "Chelsea defeated Manchester United.\n";
 
-        cout << "\nTopological sort of teams:\n";
-        if (!g.cycle_exists(chelsea))
-            g.topological_sort();
-    }
+    cout << "\nTopological sort of teams:\n";
+    g.topological_sort();
 }
 
-void test2() {
+void test_cycles() {
+    /// Main Output:
+    /// Cyclic path is: bcbd
+    /// Cycle exists!
+    Graph g;
+    auto a = make_shared<Node>("a");
+    auto b = make_shared<Node>("b");
+    auto c = make_shared<Node>("c");
+    auto d = make_shared<Node>("d");
+    auto e = make_shared<Node>("e");
+    auto r = make_shared<Node>("r");
+    g.add_edge(r, a);
+    g.add_edge(r, b);
+    g.add_edge(a, c);
+    g.add_edge(b, c);
+    g.add_edge(c, d);
+    g.add_edge(c, e);
+    g.add_edge(d, b);
+    if (g.cycle_exists(r))
+        cout << "Cycle exists!" << endl;
+}
+
+void test_shortest_path() {
     /// Main Output:
     /// Shortest path from a -> d has weight: 9
     Graph g;
@@ -474,15 +516,17 @@ void test2() {
         min_path_strings;
     g.shortest_path(a, min_path_distances,
                     min_path_strings);
-    cout << "Shortest path from a -> d has weight: "
+    cout << "Shortest path from a -> d has path: "
          << min_path_strings[d] << endl;
     cout << "Shortest path from a -> d has weight: "
          << min_path_distances[d] << endl;
 }
 
 int main() {
-    test1();
+    test_basic();
     cout << endl;
-    test2();
+    test_cycles();
+    cout << endl;
+    test_shortest_path();
     return 0;
 }
