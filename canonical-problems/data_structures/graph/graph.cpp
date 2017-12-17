@@ -339,11 +339,11 @@ class Graph {
         for (const auto v : adj_list) {
             // assign delta(source, v) to infinity
             min_weights[v] = numeric_limits<int>::max();
-            min_paths[v] += source->key;
         }
         // but we know delta(source, source) is 0
         // since all weight edges are non zero
         min_weights[source] = 0;
+        min_paths[source] += source->key;
         // now initialize the priority queue
         auto cmp = [&min_weights](shared_ptr<Node> v2,
                                   shared_ptr<Node> v1) {
@@ -373,7 +373,7 @@ class Graph {
             }
             pq.pop();
         }
-        // just for min_paths, we have to add destintion
+        // just for min_paths, we have to add destination
         // at end
         for (const auto v : adj_list) {
             if (v != source)
