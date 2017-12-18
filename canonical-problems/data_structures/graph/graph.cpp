@@ -360,6 +360,12 @@ class Graph {
     /// Note: T_decrease_key is the heap operation where we
     /// have to re-adjust the internal heap structure to
     /// satisfy invariant.
+    /// Note: Unfortunately, std lib std::priority_queue
+    /// does not have decrease key functionality which we
+    /// need for Dijkstra's algorithm. Instead, we'll use
+    /// our own PriorityQueue. See below for discussion on
+    /// this:
+    /// https://stackoverflow.com/questions/9209323/easiest-way-of-using-min-priority-queue-with-key-update-in-c
     void shortest_path(
         shared_ptr<Node> source,
         unordered_map<shared_ptr<Node>, int>& min_weights,
@@ -401,6 +407,22 @@ class Graph {
                         neighbor.second;
                     // have to trigger re-sort in pq
                     // this is the implicity T_decrease_key
+                    // since we don't have decrease key,
+                    // we'll
+                    // try something very ineffecient just
+                    // to
+                    // prove correctness of the code:
+                    auto pq_copy = pq;
+                    while (!pq.empty())
+                        pq.pop();
+                    while (!pq_copy.empty()) {
+                        pq.push(pq_copy.top());
+                        pq_copy.pop();
+                    }
+                    // keep storing parents when relaxing
+                    // we'll need this to print the full
+                    // path later
+                    parents[neighbor.first] = min_vertex;
                 }
             }
             pq.pop();
@@ -420,7 +442,7 @@ class Graph {
             dest_copy = parents[dest_copy];
         }
         reverse(path.begin(), path.end());
-        return source->key + path + dest->key;
+        return source->key + path;
     }
 
   private:
@@ -504,6 +526,7 @@ void test_cycles() {
 
 void test_shortest_path() {
     /// Main Output:
+    /// Shortest path from a -> d has path: acbd
     /// Shortest path from a -> d has weight: 9
     Graph g;
     auto a = make_shared<Node>("a");
