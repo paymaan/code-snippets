@@ -71,6 +71,22 @@ short CountBits(unsigned int x) {
     return num_1_bits;
 }
 
+/// Tells if a given number is a power of 2
+/// i.e. 1, 2, 4, 8, 16, 32 will all return true
+/// Key is to realize:
+/// x is a power of 2 iff only single 1 bit in x
+/// Then we can reduce the problem to find this
+/// We know that x & (x - 1) erases the lowest 1 bit
+/// so if we do that, and we are left with all zeros (= 0)
+/// then our number is a power of two.
+/// O(k) time where k = distance between LSB and lowest 1 bit
+/// We obviously assume here that & and == operators are O(1).
+/// Space is O(1)
+bool IsPowerOfTwo(unsigned int x) {
+    if (x <= 0) return false;
+    return (x & (x - 1)) == 0;
+}
+
 /// Parity(5) = 0 because 5 = (101) i.e.
 /// even number of 1's. Parity(7) = 1
 /// because (111) has 3 or odd # of 1's.
