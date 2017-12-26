@@ -176,12 +176,55 @@ long ReverseBits(long x) {
     return x;
 }
 
-unsigned Multiply(unsigned x, unsigned y) {
-    return 0;
+// Time: O(n) where n = # of bits
+// Space: O(n)
+// Algorithm:
+// Adding two numbers, "a" and "b":
+// 1) Add two numbers (sum) but forget the carry
+//    This way, ith bit in sum will be 0 iff a and b
+//    have the same ith bit i.e. 1,1 or 0,0.
+//    This is just XOR.
+// 2) Add two numbers but ONLY carry. This way, ith
+//    bit in sum (we call this variably "carry") will
+//    be 1 iff (i - 1) bit of a and b are both 1's, else
+//    we'll get zero. This is essentially AND << 1.
+// 3) Keep iterating until there is no carry.
+unsigned Add(unsigned x, unsigned y) {
+    while (y) {
+        unsigned sum = x ^ y; // add without carrying
+        unsigned carry = (x & y) << 1; // carry, but don't add
+        x = sum;
+        y = carry;
+    }
+    return x;
 }
 
-unsigned Add(unsigned a, unsigned b) {
-    return 0;
+// Two ways to solve this:
+// 1) x * y = x + x + x ... (y times) => O(2 ^ n) time where
+//    n = # of bits
+// 2) Shift and add method. For example, in base 10:
+//    21 * 3 = (1 * 3 x 10^0) + (2 * 3 x 10^1)
+//           = 3 + 60 = 63
+//    In binary can do the same, except that we have
+//    either 1 * (bit * 2^k) or 0 * (bit * 2^k)
+//    We don't count 0, and only count 1, for which we
+//    don't have to multiply by 1 either because 1 * bit =
+//    bit If 1, we just add to the running_sum. In each
+//    iteration, we keep shifting "x" to the right by 1 bit
+//    and "y" to the left. "y" represents 2^k part which we
+//    have to add if needed. Note we still need "add" as a
+//    sub-routine. Time: O(n ^ 2) where n = # of bits in x/y
+//    that the operands operate on Quadratic because add
+//    itself is O(n). Space: O(n) to store sum.
+unsigned Multiply(unsigned x, unsigned y) {
+    unsigned sum = 0;
+    while (x) {
+        if (x & 1)
+            sum = Add(sum, y);
+        x = x >> 1;
+        y = y << 1;
+    }
+    return sum;
 }
 
 unsigned Divide(unsigned x, unsigned y) {
