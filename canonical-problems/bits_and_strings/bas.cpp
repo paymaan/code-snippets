@@ -192,7 +192,8 @@ long ReverseBits(long x) {
 unsigned Add(unsigned x, unsigned y) {
     while (y) {
         unsigned sum = x ^ y; // add without carrying
-        unsigned carry = (x & y) << 1; // carry, but don't add
+        unsigned carry = (x & y)
+                         << 1; // carry, but don't add
         x = sum;
         y = carry;
     }
@@ -227,8 +228,56 @@ unsigned Multiply(unsigned x, unsigned y) {
     return sum;
 }
 
+/// Compute x/y using only addition, subtraction, and
+/// shifting operators
+/// Here, we return the quoteient, but we can return
+/// remainder as well if needed.
+/// Example: x = 11, y = 2
+/// x/y = 11/2 => quotient = 5, remainder = 1
+/// One algorithm is to keep subtracting "y" from "x"
+/// until x <= y. In this case, 11 - 2 - 2 - 2 - 2 - 2 = 1
+/// Since 1 <= 2, we stop.
+/// Quotient is 5 since we had to subtract 2 five times
+/// Remainder is 1 since that is what was left at the end
+/// This works but complexity is O(x) which is really,
+/// really bad! Imagine, x = 2 ^ 31, y = 1; we'll have to
+/// subtract 1 O(2 ^ 31) times!
+/// Another better algorithm
+/// which runs in O(n) where n = # of bits, is given below:
+/// Instead of removing "y" each time, remove 2^k * y where
+/// k is the largest integer s.t. 2^k * y <= x
+/// Let's run through an example:
+/// 11 -> 11 - 2^2 * 2
+/// We chose k = 2 because k = 3, 2^3 * 2 = 16 > 11
+/// 11 - 2^2 * 2 = 3
+/// Next iteration:
+/// 3 - 2^0 * 2  = 1(chose k = 0)
+/// Done since 1 < 2
+/// Quotient: 2^2 + 2^0 = 5
+/// Remainder: 1 (whatever left at the end)
+/// Time: O(n) where n = # of bits
+/// Space: O(n) because we have to store temporaries and
+/// return final answer
 unsigned Divide(unsigned x, unsigned y) {
-    return 0;
+    unsigned quotient = 0;
+    int k = 32; // max can be 32
+    unsigned long long two_k_y =
+        static_cast<unsigned long long>(y)
+        << 32; // starting 2^k * y
+    while (x >= y) {
+        // calculate biggest k s.t. 2^k * y <= x
+        // can do while (!(two_k_y <= x)) OR:
+        while (two_k_y > x) {
+            --k;
+            two_k_y = two_k_y >> 1;
+        }
+        // largest k found, just add 2^k (1U << k) now
+        // to running sum or quotient:
+        quotient += 1U << k;
+        // Finally, new "x" becomes whatever was left
+        x = x - two_k_y;
+    }
+    return quotient;
 }
 
 /// Power(2, 3) = 8 i.e. 2^3
