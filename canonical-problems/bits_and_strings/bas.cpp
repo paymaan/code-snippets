@@ -79,11 +79,12 @@ short CountBits(unsigned int x) {
 /// We know that x & (x - 1) erases the lowest 1 bit
 /// so if we do that, and we are left with all zeros (= 0)
 /// then our number is a power of two.
-/// O(k) time where k = distance between LSB and lowest 1 bit
-/// We obviously assume here that & and == operators are O(1).
-/// Space is O(1)
+/// O(k) time where k = distance between LSB and lowest 1
+/// bit We obviously assume here that & and == operators are
+/// O(1). Space is O(1)
 bool IsPowerOfTwo(unsigned int x) {
-    if (x <= 0) return false;
+    if (x <= 0)
+        return false;
     return (x & (x - 1)) == 0;
 }
 
