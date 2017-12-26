@@ -282,9 +282,47 @@ unsigned Divide(unsigned x, unsigned y) {
 
 /// Power(2, 3) = 8 i.e. 2^3
 /// Basically just exponent
-/// Implement without any native c++ operators
+/// Can use multiply and shift operators.
+/// Can ignore underflow and overflow
+/// Brute force algorithm for calculating x ^ y
+/// would be to multiply x with running_product y
+/// times. This takes (y - 1) multiplications => O(2^n) time
+/// A better algorithm will be to reduce the number of
+/// multiplications Here's the trick which utilizes exponent
+/// property: x ^ (a + b) = x ^ a * x ^ b So: x ^ y = x ^ (y
+/// / 2 + y / 2)
+///       = (x ^ y / 2) * (x ^ y / 2)
+///       = (x ^ y / 2) * (x ^ y / 2)
+/// The above is only possible when "y" is even
+/// When y is odd, y / 2 in C++ would be floor(y / 2), so:
+/// x ^ y = x ^ (y/2 + y/2 + 1)
+///       = (x ^ (y/2 + y/2)) * x
+///       = (x ^ y / 2) ^ 2   * x
+///       = (x ^ y / 2) * (x ^ y / 2) * x
+/// This way we get a recursive way to compute x ^ y.
+/// This means that if y is a power of 2, instead of doing:
+/// x ^ 32 = x * x * x * x ... * x (32 times), we can do:
+/// x ^ 32 = x -> x^2 -> x^4 -> x^8 -> x^16 -> x^32
+/// we do this by power >> 1 and keeping a running product
+/// If y is negative, x -> 1/x and y -> -y
+/// Time: O(n) where n = # of bits
+/// This is because number of multiplications is at most 2
+/// times the index of y's MSB.
 double Power(double x, int y) {
-    return 0;
+    double running_product = 1.0;
+    long long power = y;
+    if (power < 0) {
+        power = -1 * power;
+        x = double(1) / x;
+    }
+    while (power) {
+        if (power & 1) {
+            running_product = running_product * x;
+        }
+        x = x * x;
+        power = power >> 1;
+    }
+    return running_product;
 }
 
 /// Reverse in base 10
