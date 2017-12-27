@@ -348,8 +348,64 @@ long Reverse(int x) {
     return is_neg ? -1 * result : result;
 }
 
+/// Returns number of digits for (x)_base
+/// Examples:
+/// num_digits(11, 2) gives 4 since there are 4 bits
+/// Note: (11)_10 = (1011)_2
+/// Similarly,
+/// num_digits(547, 10) gives 3 since there are 3 digits
+/// O(1) time
+int num_digits(int x, int base) {
+    return ceil(log(x + 1) / log(base));
+}
+
+/// extract_digit(5467, 0) == 7
+/// extract_digit(5467, 1) == 6
+/// extract_digit(5467, 2) == 4
+/// extract_digit(5467, 3) == 5
+/// Only base 10
+/// Idea:
+/// extract_digit(5467, 1) =
+/// 5467 / 10^1 - 10 * (5467 / 10^2) =
+/// 546 - 10*54 = 546 - 540 = 6
+/// O(1) time assuming Power() is O(1)
+int extract_digit(int x, int idx) {
+    return floor(x / Power(10, idx)) -
+           (10 * floor(x / Power(10, idx + 1)));
+}
+
+/// Idea is simple:
+/// Find number of digits e.g. 5
+/// for 62458
+/// Now extract most significant digit (msd)
+/// and least significant digit (lsd)
+/// Compare to ensure same, else early return false
+/// Continue to next smaller number by chopping off
+/// msd and lsd.
+/// Note: Negative numbers can never be palindrome.
+/// Time: O(n) where n = # of bits
+/// Space: O(1)
+/// An alternative approach is:
+/// Reverse(x) == x
 bool IsPalindromeNumber(int x) {
-    return false;
+    if (x < 0)
+        return false;
+    int n = num_digits(x, 10);
+    int msd_mask = pow(10, n - 1);
+    for (int i = 0; i < n / 2; ++i) {
+        int msd = x / msd_mask;
+        int lsd = x % 10;
+        if (msd != lsd)
+            return false;
+        // chop off msd
+        x = x % msd_mask;
+        // chop off lsd
+        x = x / 10;
+        // since we chopped off 2 digits, update msd_mask
+        // by 10^2
+        msd_mask = msd_mask / 100;
+    }
+    return true;
 }
 
 /// Convert char to its ascii value
