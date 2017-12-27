@@ -303,11 +303,10 @@ unsigned Divide(unsigned x, unsigned y) {
 /// This means that if y is a power of 2, instead of doing:
 /// x ^ 32 = x * x * x * x ... * x (32 times), we can do:
 /// x ^ 32 = x -> x^2 -> x^4 -> x^8 -> x^16 -> x^32
-/// we do this by power >> 1 and keeping a running product
-/// If y is negative, x -> 1/x and y -> -y
-/// Time: O(n) where n = # of bits
-/// This is because number of multiplications is at most 2
-/// times the index of y's MSB.
+/// we do this by power >> 1 and by keeping a running
+/// product If y is negative, x -> 1/x and y -> -y Time:
+/// O(n) where n = # of bits This is because number of
+/// multiplications is at most 2 times the index of y's MSB.
 double Power(double x, int y) {
     double running_product = 1.0;
     long long power = y;
