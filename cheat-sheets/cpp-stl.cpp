@@ -276,6 +276,38 @@ void f_stack_queue() {
     // we can only push to back and pop from front.
 }
 
+void f_streams() {
+    // STRING streams
+    // Advantage: e.g. in serialization/deserialization, we can use
+    // string streams using cout/cin easily without having to worry
+    // about placement of strings i.e. the stream takes care of
+    // appending and ordering. All we do is pass the stream as a reference
+    // and keep writing/reading to/from it.
+    // 1) serialization
+    ostringstream out;
+    out << "string to serialize"; // delimiter = ' '
+    string serialized_str = out.str();
+
+    // 2) deserialization
+    // since 3 strings (delimited by ' ')
+    // do in >> xx 3 times.
+    // this will print:
+    // string
+    // to
+    // serialize
+    istringstream in(serialized_str);
+    string deserialized_string;
+    in >> deserialized_string;
+    cout << deserialized_string << "\n";
+    in >> deserialized_string;
+    cout << deserialized_string << "\n";
+    in >> deserialized_string;
+    cout << deserialized_string << "\n";
+
+    // note: practicaly, we can pass in and out as references
+    // to functions and read from or write to the stream
+}
+
 int main() {
     f_heap();
     f_multiset();
@@ -284,5 +316,6 @@ int main() {
     f_string();
     f_hash_map();
     f_stack_queue();
+    f_streams();
     return 0;
 }
