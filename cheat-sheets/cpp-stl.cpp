@@ -238,6 +238,44 @@ void f_hash_map() {
     cout << cache[{4,3}] << "\n";
 }
 
+void f_stack_queue() {
+    // STACK
+    stack<int> stack;
+    // push 5, 7, 1, 10
+    stack.push(5);
+    stack.push(7);
+    stack.push(1);
+    stack.push(10);
+    // now keep removing elements from the top
+    // of the stack until we empty it
+    // prints: 10 1 7 5
+    while (!stack.empty()) {
+        cout << stack.top() << " ";
+        stack.pop();
+    }
+    cout << "\n";
+
+    // QUEUE
+    queue<int> queue;
+    // push 5, 7, 1, 10
+    // push === push at the back of the queue
+    queue.push(5);
+    queue.push(7);
+    queue.push(1);
+    queue.push(10);
+    // now keep removing elements from the front
+    // of the queue until we empty it
+    // prints: 5 7 1 10
+    while (!queue.empty()) {
+        cout << queue.front() << " ";
+        queue.pop(); // pops from front
+    }
+    cout << "\n";
+    // note: for queue, we also have back() to access
+    // elements at the back of the queue. Having said that,
+    // we can only push to back and pop from front.
+}
+
 int main() {
     f_heap();
     f_multiset();
@@ -245,5 +283,6 @@ int main() {
     f_vector();
     f_string();
     f_hash_map();
+    f_stack_queue();
     return 0;
 }
