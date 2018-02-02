@@ -92,8 +92,38 @@ void f_multiset() {
     print(s3);
 }
 
+void f_sort() {
+    vector<int> A = {3, 7, 8, 1, 2};
+
+    // default sort (ascending)
+    // prints: 1 2 3 7 8
+    sort(A.begin(), A.end());
+    print(A);
+
+    // descending sort
+    // prints: 8 7 3 2 1
+    sort(A.begin(), A.end(), greater<int>());
+    print(A);
+
+    // sort with custom comparator
+    // prints: 1 2 3 7 8
+    class CustomCompFnctor {
+        public:
+            // For std::sort, we want to order a and then b
+            // Note order in prototype
+            // return a > b (descending)
+            // return a < b (ascending)
+            bool operator()(const int a, const int b) const {
+                return a < b;
+            }
+    };
+    sort(A.begin(), A.end(), CustomCompFnctor());
+    print(A);
+}
+
 int main() {
     f_heap();
     f_multiset();
+    f_sort();
     return 0;
 }
