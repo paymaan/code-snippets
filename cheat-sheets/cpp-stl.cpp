@@ -51,7 +51,49 @@ void f_heap() {
     print_pq(my_heap);
 }
 
+// Multiset can be used as an alternative to priority_queue
+// Advantage: has begin(), rbegin(), end, rend(), find()
+void f_multiset() {
+    vector<int> A = {3, 7, 8, 1, 2};
+
+    // Basic multiset (default order is ascending)
+    // prints: 1 2 3 7 8
+    multiset<int> s1(A.begin(), A.end());
+    print(s1);
+
+    // Multiset (descending)
+    // prints: 8 7 3 2 1
+    multiset<int, greater<int>> s2(A.begin(), A.end());
+    print(s2);
+
+    // Custom comparator multiset
+    // prints: 1 2 3 7 8
+    class CustomCompFnctor {
+        public:
+            // In set/multiset, we want to order a and then b
+            // Note order in prototype
+            // For max heap: a > b (descending)
+            // For min heap: a < b (ascending)
+            bool operator()(const int a, const int b) const {
+                return a < b;
+            }
+    };
+    multiset<int, CustomCompFnctor> s3(A.begin(), A.end());
+    // 3 cout's below print:
+    // 1
+    // 8
+    // 7
+    cout << *s3.begin() << endl;
+    cout << *s3.rbegin() << endl;
+    auto it = s3.find(7);
+    if (it != s3.end()) {
+        cout << *it << endl;
+    }
+    print(s3);
+}
+
 int main() {
     f_heap();
+    f_multiset();
     return 0;
 }
