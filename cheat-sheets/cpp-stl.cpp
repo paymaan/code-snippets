@@ -218,11 +218,32 @@ void f_string() {
     // using find's pos (starting index) and count (length of search space)
 }
 
+void f_hash_map() {
+    class PairHashFnctor {
+        public:
+            size_t operator()(const pair<int, int>& p) const {
+                return p.first ^ p.second; // ^ === XOR
+            }
+    };
+
+    // key: pair<int, int>
+    // value: string
+    // key value pair: < pair<int, int> , string >
+    // since pair<int, int> doesn't have a default std::hash,
+    // we'll have to provide one for this cache code to compile
+    unordered_map<pair<int, int>, string, PairHashFnctor> cache;
+    cache[{4,3}] = "abc";
+    cache[{7, -1}] = "def";
+    // prints: "abc"
+    cout << cache[{4,3}] << "\n";
+}
+
 int main() {
     f_heap();
     f_multiset();
     f_sort();
     f_vector();
     f_string();
+    f_hash_map();
     return 0;
 }
