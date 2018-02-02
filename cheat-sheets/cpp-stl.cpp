@@ -121,9 +121,52 @@ void f_sort() {
     print(A);
 }
 
+void f_vector() {
+    // sort only first 3 elements in descending order
+    // note: A.begin() -> index 0
+    //       A.begin() + 3 -> index 3
+    // Non strict range: [0, 3) == [0, 2]
+    // so we sort elements 0, 1, and 2.
+    // prints: 8 7 3 1 2
+    vector<int> A = {3, 7, 8, 1, 2};
+    sort(A.begin(), A.begin() + 3, greater<int>());
+    print(A);
+
+    // sort only last 3 elements in ascending order
+    // note: A.end() -> index A.size() i.e. 1 after last index!
+    //       A.end() - 3 -> index A.size() - 3
+    // Non-strict range: [A.size() - 3, A.size()) == [A.size() - 3, A.size() - 1]
+    // so we sort last 3 elements
+    // e.g. size = 5 (index 0 to 4). We sort element at indices 2, 3, and 4.
+    // prints: 3 7 1 2 8
+    vector<int> B = {3, 7, 8, 1, 2};
+    sort(B.end() - 3, B.end());
+    print(B);
+
+    // extract subvector; this is O(n) time where n = y - x
+    // where we subvector starts from x and ends at y
+    // Here, we extract elements indices 1 to 3
+    // note: when extracting, we follow [a, b) non strict range
+    // == [a, b - 1]
+    // i.e. {C.begin() + 1, C.begin() + 1 + 3} will extract
+    // elements at indices 1, 2, 3
+    // prints: 7 8 1
+    vector<int> C = {3, 7, 8, 1, 2};
+    vector<int> sub_c = {C.begin() + 1, C.begin() + 1 + 3};
+    print(sub_c);
+
+    // another way to create same sub-vector as before:
+    // this uses initializer of std::vector
+    // prints: 7 8 1
+    vector<int> D = {3, 7, 8, 1, 2};
+    vector<int> sub_d(D.begin() + 1, D.begin() + 1 + 3);
+    print(sub_d);
+}
+
 int main() {
     f_heap();
     f_multiset();
     f_sort();
+    f_vector();
     return 0;
 }
