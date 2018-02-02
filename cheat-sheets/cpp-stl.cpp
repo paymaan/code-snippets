@@ -173,6 +173,51 @@ void f_vector() {
         cout << *it << "\n";
 }
 
+void f_string() {
+    string s = "foo bar";
+
+    // extract first 3 elements i.e. "foo"
+    // note 2nd argument to substr is "length" of substr
+    //      1st argument is starting index
+    // prints: "foo"
+    cout << s.substr(0, 3) << "\n";
+
+    // extra from index i to j
+    // prints: "o ba"
+    // note: length from i to j is: j - i + 1
+    int i = 2, j = 5;
+    cout << s.substr(2, 5 - 2 + 1) << "\n";
+
+    // can sort string lexograpgically
+    // prints: " abfoor"
+    string s_copy(s); // equivalent: string s_copy = s;
+    sort(s_copy.begin(), s_copy.end());
+    cout << s_copy << "\n";
+
+    // can reverse string as well
+    // prints: "rab oof"
+    string s_another_copy(s); // equivalent: string s_copy = s;
+    reverse(s_another_copy.begin(), s_another_copy.end());
+    cout << s_another_copy << "\n";
+
+    // Is character "c" present in string?
+    // prints: "b was found"
+    char char_to_find = 'b';
+    auto it1 = s.find(char_to_find);
+    if (it1 != string::npos)
+        cout << char_to_find << " was found" << "\n";
+
+    // Is substring "ba" present in string?
+    // prints: "ba was found"
+    string substr_to_find = "ba";
+    auto it2 = s.find(substr_to_find);
+    if (it2 != string::npos)
+        cout << substr_to_find << " was found" << "\n";
+
+    // Note: More powerful searches can be made in string
+    // using find's pos (starting index) and count (length of search space)
+}
+
 int main() {
     f_heap();
     f_multiset();
