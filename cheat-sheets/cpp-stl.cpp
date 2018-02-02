@@ -304,7 +304,7 @@ void f_streams() {
     in >> deserialized_string;
     cout << deserialized_string << "\n";
 
-    // note: practicaly, we can pass in and out as references
+    // note: practically, we can pass in and out as references
     // to functions and read from or write to the stream
 }
 
