@@ -168,5 +168,6 @@ int main() {
     f_multiset();
     f_sort();
     f_vector();
+    f_string();
     return 0;
 }
