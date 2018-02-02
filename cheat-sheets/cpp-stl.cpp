@@ -161,6 +161,16 @@ void f_vector() {
     vector<int> D = {3, 7, 8, 1, 2};
     vector<int> sub_d(D.begin() + 1, D.begin() + 1 + 3);
     print(sub_d);
+
+    // find in vector
+    // prints: 7
+    vector<int> E = {3, 7, 8, 1, 2};
+    // vector.find() unfortunately isn't support in vector class:
+    // auto it = E.find(7);
+    // we have a generic find in stl though which works on different containers:
+    auto it = find(E.begin(), E.end(), 7);
+    if (it != E.end())
+        cout << *it << "\n";
 }
 
 int main() {
