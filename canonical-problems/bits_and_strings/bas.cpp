@@ -565,6 +565,49 @@ string ConvertBase(const string& num_as_string, int b1,
     return num_base_b2;
 }
 
+/// Some more questions involving bit manipulation.
+
+/// Convert decimal number to base2
+/// Time: O(M); Space: O(M)
+/// M = # of bits in 'n'
+/// This assumes >> 1 (bit right shift) is O(1)
+/// Uses LSB extraction technique
+string binaryLSB(int n) {
+    if (n <= 0) return "0";
+    string result;
+    while (n) {
+        result += to_string(n & 1); // append LSB
+        n = n >> 1; // n = n / 2
+    }
+    reverse(result.begin(), result.end());
+    return result;
+}
+
+/// Helper utility that extracts MSB given a number
+/// and it's number of bits. Note: Number of bits can
+/// be calculated inside the function as well!
+int extractMSB(int n, int numBits) {
+    int mask = (1 << (numBits - 1)); // create mask like 100000
+    n = n & mask; // AND with mask to get MSB followed by zeros
+    n = n >> (numBits - 1); // Now move that single 1/0 to the right again
+    return n;
+}
+
+/// Convert decimal number to base2
+/// Same as binary above but extracts MSB instead of LSB
+/// so we don't need to reverse at the end.
+string binaryMSB(int n) {
+    if (n <= 0) return "0";
+    string result;
+    int numBits = floor(log(n) / log(2)) + 1;
+    while (n) {
+        result += to_string(extractMSB(n, numBits)); // append MSB
+        n = n & (~(1 << (numBits - 1))); // mask = ~(1000) = 0111.. this saves every bit except MSB which we've appended already
+        --numBits;
+    }
+    return result;
+}
+
 int main() {
     cout << CountBits(5) << endl;
     cout << Parity(7) << endl;
