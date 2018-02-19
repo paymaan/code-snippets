@@ -121,7 +121,7 @@ class Graph {
         assert(source && dest);
         if (adj_list.find(source) == adj_list.end())
             add_node(source);
-        if (adj_list.find(source) == adj_list.end())
+        if (adj_list.find(dest) == adj_list.end())
             add_node(dest);
         source->add_neighbor(dest, weight);
     }
@@ -165,9 +165,9 @@ class Graph {
         // starting
         // from node1. Will do dfs for now.
         for (const auto& neighbor : node1->neighbors) {
-            if (neighbor.first == node2)
+            if (neighbor.first == node2 ||
+                is_reachable(neighbor.first, node2))
                 return true;
-            return is_reachable(neighbor.first, node2);
         }
         return false;
     }
