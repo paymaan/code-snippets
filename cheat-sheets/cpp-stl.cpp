@@ -306,6 +306,22 @@ void f_streams() {
 
     // note: practically, we can pass in and out as references
     // to functions and read from or write to the stream
+
+    // By default, istringstream delimits by a space character (' ')
+    string spaceStr = "ab cdefg hi jkl";
+    istringstream in2(spaceStr);
+    string token2;
+    while (in2 >> token2) {
+        cout << token2 << endl;
+    }
+
+    // We can change that. Let's say we wanted to delimit by comma (',')
+    string commaStr = "ab,cdefg,hi,jkl"
+    istringstream in3(commaStr);
+    string token3;
+    while (getline(in3, token3, ',')) {
+        cout << token3 << endl;
+    }
 }
 
 int main() {
